@@ -1,8 +1,7 @@
-import { AuthScreen } from '@/components/auth/AuthScreen';
-import { HomeScreen } from '@/components/auth/HomeScreen';
 import { Box } from '@/components/ui/box';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/lib/auth/AuthProvider';
+import { Redirect } from 'expo-router';
 import React from 'react';
 
 export default function Index() {
@@ -10,15 +9,11 @@ export default function Index() {
 
   if (isLoading) {
     return (
-      <Box className="flex-1 items-center justify-center bg-white">
+      <Box className="bg-background flex-1 items-center justify-center">
         <Spinner size="large" />
       </Box>
     );
   }
 
-  if (isAuthenticated) {
-    return <HomeScreen />;
-  }
-
-  return <AuthScreen />;
+  return <Redirect href={isAuthenticated ? '/home' : '/welcome'} />;
 }

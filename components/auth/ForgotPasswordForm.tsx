@@ -6,6 +6,8 @@ import { VStack } from '@/components/ui/vstack';
 import * as authApi from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { useAppToast } from '@/lib/hooks/useAppToast';
+import { useThemePreference } from '@/lib/theme/ThemeProvider';
+import { getPrimarySpinnerColor } from '@/lib/theme/spinnerColor';
 import { isValidEmail, isValidPassword, isValidResetCode } from '@/lib/utils/validation';
 import React, { useState } from 'react';
 
@@ -16,6 +18,8 @@ type ForgotPasswordFormProps = {
 
 export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotPasswordFormProps) {
   const toast = useAppToast();
+  const { preference, resolved } = useThemePreference();
+  const spinnerColor = getPrimarySpinnerColor(preference, resolved);
   const [step, setStep] = useState<'request' | 'reset'>('request');
   const [email, setEmail] = useState(initialEmail);
   const [code, setCode] = useState('');
@@ -87,15 +91,15 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
       <VStack className="flex-1 items-center justify-center gap-5">
         <VStack className="w-full max-w-100 gap-5">
           <VStack className="items-center gap-1">
-            <Text className="text-2xl font-bold text-neutral-950">忘记密码</Text>
-            <Text className="text-center text-sm text-neutral-500">
+            <Text className="text-foreground text-2xl font-bold">忘记密码</Text>
+            <Text className="text-muted-foreground text-center text-sm">
               {step === 'request' ? '输入注册邮箱，获取 8 位验证码' : '输入验证码并设置新密码'}
             </Text>
           </VStack>
 
           <VStack className="gap-3">
             <Input
-              className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4"
+              className="border-border bg-muted h-12 rounded-2xl px-4"
               isDisabled={step === 'reset'}>
               <InputField
                 value={email}
@@ -106,13 +110,13 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
                 keyboardType="email-address"
                 textContentType="emailAddress"
                 editable={step === 'request'}
-                className="text-base text-neutral-900"
+                className="text-foreground text-base"
               />
             </Input>
 
             {step === 'reset' ? (
               <>
-                <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
                   <InputField
                     value={code}
                     onChangeText={setCode}
@@ -120,27 +124,27 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
                     keyboardType="number-pad"
                     maxLength={8}
                     textContentType="oneTimeCode"
-                    className="text-base text-neutral-900"
+                    className="text-foreground text-base"
                   />
                 </Input>
-                <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
                   <InputField
                     value={newPassword}
                     onChangeText={setNewPassword}
                     placeholder="新密码（至少 8 位）"
                     secureTextEntry
                     textContentType="newPassword"
-                    className="text-base text-neutral-900"
+                    className="text-foreground text-base"
                   />
                 </Input>
-                <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
                   <InputField
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     placeholder="确认新密码"
                     secureTextEntry
                     textContentType="newPassword"
-                    className="text-base text-neutral-900"
+                    className="text-foreground text-base"
                   />
                 </Input>
               </>
@@ -154,39 +158,43 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
           <Button
             size="lg"
             disabled={sending}
-            className="h-14 rounded-full bg-neutral-950 data-[active=true]:bg-neutral-800 data-[disabled=true]:opacity-60 data-[hover=true]:bg-neutral-800"
+            className="bg-primary h-14 rounded-full data-[active=true]:opacity-90 data-[disabled=true]:opacity-60 data-[hover=true]:opacity-90"
             onPress={sendCode}>
-            {sending ? <ButtonSpinner color="#fff" /> : null}
-            <ButtonText className="text-base font-semibold text-white">发送验证码</ButtonText>
+            {sending ? <ButtonSpinner color={spinnerColor} /> : null}
+            <ButtonText className="text-primary-foreground text-base font-semibold">
+              发送验证码
+            </ButtonText>
           </Button>
         ) : (
           <>
             <Button
               size="lg"
               disabled={submitting}
-              className="h-14 rounded-full bg-neutral-950 data-[active=true]:bg-neutral-800 data-[disabled=true]:opacity-60 data-[hover=true]:bg-neutral-800"
+              className="bg-primary h-14 rounded-full data-[active=true]:opacity-90 data-[disabled=true]:opacity-60 data-[hover=true]:opacity-90"
               onPress={onReset}>
-              {submitting ? <ButtonSpinner color="#fff" /> : null}
-              <ButtonText className="text-base font-semibold text-white">重置密码</ButtonText>
+              {submitting ? <ButtonSpinner color={spinnerColor} /> : null}
+              <ButtonText className="text-primary-foreground text-base font-semibold">
+                重置密码
+              </ButtonText>
             </Button>
             <Pressable
               disabled={sending}
               onPress={sendCode}
               className="items-center py-1 data-[disabled=true]:opacity-50">
-              <Text className="text-sm text-neutral-600">
+              <Text className="text-muted-foreground text-sm">
                 {sending ? '发送中…' : '重新发送验证码'}
               </Text>
             </Pressable>
             <Pressable onPress={() => setStep('request')} className="items-center py-1">
-              <Text className="text-sm text-neutral-500">修改邮箱</Text>
+              <Text className="text-muted-foreground text-sm">修改邮箱</Text>
             </Pressable>
           </>
         )}
 
         <Pressable onPress={onBackToLogin} className="items-center py-2">
-          <Text className="text-sm text-neutral-500">返回登录</Text>
+          <Text className="text-muted-foreground text-sm">返回登录</Text>
         </Pressable>
-        <Text className="px-2 text-center text-xs leading-5 text-neutral-400">
+        <Text className="text-muted-foreground px-2 text-center text-xs leading-5">
           为防枚举，无论邮箱是否存在都会提示已受理；请以实际收件为准。
         </Text>
       </VStack>

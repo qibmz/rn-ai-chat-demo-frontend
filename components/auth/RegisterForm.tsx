@@ -1,4 +1,4 @@
-import { AuthModeSwitch } from '@/components/auth/AuthModeSwitch';
+import { AuthModeSwitch, type AuthMode } from '@/components/auth/AuthModeSwitch';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
 import { Input, InputField } from '@/components/ui/input';
 import { Pressable } from '@/components/ui/pressable';
@@ -7,17 +7,20 @@ import { VStack } from '@/components/ui/vstack';
 import { ApiError } from '@/lib/api/client';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { useAppToast } from '@/lib/hooks/useAppToast';
+import { useThemePreference } from '@/lib/theme/ThemeProvider';
+import { getPrimarySpinnerColor } from '@/lib/theme/spinnerColor';
 import { isValidEmail, isValidPassword } from '@/lib/utils/validation';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 
 type RegisterFormProps = {
-  onSwitchToLogin: () => void;
-  onBack: () => void;
+  onModeChange: (mode: AuthMode) => void;
 };
 
-export function RegisterForm({ onSwitchToLogin, onBack }: RegisterFormProps) {
+export function RegisterForm({ onModeChange }: RegisterFormProps) {
   const { register } = useAuth();
   const toast = useAppToast();
+  const { preference, resolved } = useThemePreference();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,6 +49,7 @@ export function RegisterForm({ onSwitchToLogin, onBack }: RegisterFormProps) {
         description: '如需验证邮箱，请查收确认邮件',
         action: 'success',
       });
+      router.replace('/home');
     } catch (error) {
       const message = error instanceof ApiError ? error.message : '操作失败，请稍后重试';
       toast.show({ title: '注册失败', description: message, action: 'error' });
@@ -59,19 +63,14 @@ export function RegisterForm({ onSwitchToLogin, onBack }: RegisterFormProps) {
       <VStack className="flex-1 items-center justify-center gap-5">
         <VStack className="w-full max-w-100 gap-5">
           <VStack className="items-center gap-1">
-            <Text className="text-2xl font-bold text-neutral-950">创建账号</Text>
-            <Text className="text-sm text-neutral-500">使用邮箱注册，开启对话</Text>
+            <Text className="text-foreground text-2xl font-bold">创建账号</Text>
+            <Text className="text-muted-foreground text-sm">使用邮箱注册，开启对话</Text>
           </VStack>
 
-          <AuthModeSwitch
-            mode="register"
-            onChange={(mode) => {
-              if (mode === 'login') onSwitchToLogin();
-            }}
-          />
+          <AuthModeSwitch mode="register" onChange={onModeChange} />
 
           <VStack className="gap-3">
-            <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+            <Input className="border-border bg-muted h-12 rounded-2xl px-4">
               <InputField
                 value={email}
                 onChangeText={setEmail}
@@ -80,27 +79,27 @@ export function RegisterForm({ onSwitchToLogin, onBack }: RegisterFormProps) {
                 autoCorrect={false}
                 keyboardType="email-address"
                 textContentType="emailAddress"
-                className="text-base text-neutral-900"
+                className="text-foreground text-base"
               />
             </Input>
-            <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+            <Input className="border-border bg-muted h-12 rounded-2xl px-4">
               <InputField
                 value={password}
                 onChangeText={setPassword}
                 placeholder="密码（至少 8 位）"
                 secureTextEntry
                 textContentType="newPassword"
-                className="text-base text-neutral-900"
+                className="text-foreground text-base"
               />
             </Input>
-            <Input className="h-12 rounded-2xl border-neutral-200 bg-neutral-50 px-4">
+            <Input className="border-border bg-muted h-12 rounded-2xl px-4">
               <InputField
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="确认密码"
                 secureTextEntry
                 textContentType="newPassword"
-                className="text-base text-neutral-900"
+                className="text-foreground text-base"
               />
             </Input>
           </VStack>
@@ -111,15 +110,17 @@ export function RegisterForm({ onSwitchToLogin, onBack }: RegisterFormProps) {
         <Button
           size="lg"
           disabled={submitting}
-          className="h-14 rounded-full bg-neutral-950 data-[active=true]:bg-neutral-800 data-[disabled=true]:opacity-60 data-[hover=true]:bg-neutral-800"
+          className="bg-primary h-14 rounded-full data-[active=true]:opacity-90 data-[disabled=true]:opacity-60 data-[hover=true]:opacity-90"
           onPress={onSubmit}>
-          {submitting ? <ButtonSpinner color="#fff" /> : null}
-          <ButtonText className="text-base font-semibold text-white">注册</ButtonText>
+          {submitting ? (
+            <ButtonSpinner color={getPrimarySpinnerColor(preference, resolved)} />
+          ) : null}
+          <ButtonText className="text-primary-foreground text-base font-semibold">注册</ButtonText>
         </Button>
-        <Pressable onPress={onBack} className="items-center py-2">
-          <Text className="text-sm text-neutral-500">返回</Text>
+        <Pressable onPress={() => router.back()} className="items-center py-2">
+          <Text className="text-muted-foreground text-sm">返回</Text>
         </Pressable>
-        <Text className="px-2 text-center text-xs leading-5 text-neutral-400">
+        <Text className="text-muted-foreground px-2 text-center text-xs leading-5">
           注册后会发送邮箱确认邮件；未开启强制验证时也可先登录使用。
         </Text>
       </VStack>

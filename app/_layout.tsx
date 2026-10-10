@@ -1,9 +1,10 @@
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
+import { ThemePreferenceProvider, useThemePreference } from '@/lib/theme/ThemeProvider';
 import '@/global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { DefaultTheme, Slot, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -37,22 +38,33 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={DefaultTheme}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <GluestackUIProvider mode="light">
-            <AuthProvider>
-              <StatusBar style="dark" />
-              <Slot />
-            </AuthProvider>
-          </GluestackUIProvider>
-        </GestureHandlerRootView>
-      </ThemeProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemePreferenceProvider>
+          <ThemedApp />
+        </ThemePreferenceProvider>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
+  );
+}
+
+function ThemedApp() {
+  const { preference, resolved } = useThemePreference();
+
+  return (
+    <ThemeProvider value={resolved === 'dark' ? DarkTheme : DefaultTheme}>
+      <GluestackUIProvider mode={preference}>
+        <AuthProvider>
+          <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+            <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: true }} />
+          </Stack>
+        </AuthProvider>
+      </GluestackUIProvider>
+    </ThemeProvider>
   );
 }

@@ -15,7 +15,8 @@ export function GluestackUIProvider({
   style?: ViewProps['style'];
 }) {
   useEffect(() => {
-    Appearance.setColorScheme(mode as ColorSchemeName);
+    // system → null，交给系统 Appearance；light / dark 强制覆盖
+    Appearance.setColorScheme(mode === 'system' ? null : (mode as ColorSchemeName));
   }, [mode]);
 
   return (

@@ -65,6 +65,8 @@ echo "feat: 添加某某功能" | pnpm exec commitlint
 4. 环境变量、密钥、真实 API Key / DSN 不要写进仓库；本地用 `.env*.local`（已 gitignore）。
 5. 合并到生产走 PR（`develop` → `main`），并在 Test plan 里说明如何验证（web / iOS / Android 至少写清验证过的端）。
 6. Lint 栈对齐 [create-expo-stack](https://github.com/roninoss/create-expo-stack)：ESLint 9 + `eslint-config-expo` + Prettier；不要擅自换成 oxlint / Biome，除非团队明确决议。
+7. **`components/ui/**` 为生成代码，禁止修改**（见下方说明）；业务写在 `app/`、`components/` 下自有目录。
+8. **尽量复用 gluestack（`@/components/ui/*`）已有组件**（如 `Menu` / `AlertDialog` / `Button`）；不要平行再造一套。确需自建业务组件时，须给出**明确理由**（例如领域语义封装、多端特化、组合多个 ui 组件），并写在 PR Summary 或相关注释里。
 
 ## 改完后的自检
 
@@ -83,7 +85,7 @@ pnpm typecheck
 - `pnpm lint`：ESLint + Prettier check
 - `pnpm format`：ESLint `--fix` + Prettier write
 - pre-commit 经 lint-staged：对暂存的 `*.{js,jsx,ts,tsx}` 跑 eslint --fix + prettier；对 `*.{json,md,yml,yaml,css}` 跑 prettier
-- `components/ui/**` 为 gluestack / 脚手架 UI 套件，**ESLint 已 ignore**（与 React Compiler lint、Reanimated SharedValue 模式冲突多）；业务代码优先写在 `app/`、自有组件目录，不要把业务逻辑塞进生成 UI 目录后期待 lint 兜底
+- **`components/ui/**` 为 gluestack / 脚手架生成的 UI 套件，禁止手改、禁止塞业务逻辑**（含「顺手修一下」也不行）。业务侧**先查、先用**已有 ui 组件（示例：下拉用 `Menu`，确认用 `AlertDialog`，不要自写浮层菜单）。需要变体或领域封装时，在 `components/` 下自建并**组合引用** `@/components/ui/*`，同时说明为何不能直接用现成组件。该目录 **ESLint 已 ignore**，不要指望在里面靠 lint 兜底。
 
 ## PR 描述结构
 
@@ -95,7 +97,7 @@ pnpm typecheck
 ## Test plan
 
 - [ ] CI 通过
-- [ ] web / 目标端本地验证
+- [ ] web 窄屏 + PC 宽屏本地验证（或注明验证过的端）
 - [ ] 合并后需确认的事项
 ```
 
@@ -106,8 +108,27 @@ pnpm typecheck
   - `max-w-[400px]` → `max-w-100`
   - `max-w-[280px]` → `max-w-70`
   - `h-[48px]` → `h-12`
-- 只有 scale 表达不了、或第三方 / `components/ui` 生成代码才允许 `-[…px]`；**新写业务 UI 必须用 scale**
+- 只有 scale 表达不了、或**已有** `components/ui` 生成代码里的写法才允许 `-[…px]`；**新写业务 UI 必须用 scale**，且仍不要去改 `components/ui`
 - 工具提示「The class `max-w-[400px]` can be written as `max-w-100`」时，按提示改掉，不要保留任意值
+
+## 多端兼容（Web / 手机 / 平板）
+
+本仓库是 Expo + Expo Router，**同一套业务 UI 要能在 iOS、Android、以及 Web（含 PC 宽屏）使用**。不要只按手机竖屏稿实现。
+
+必须遵守：
+
+1. **默认按「手机优先」写，再用 `md:` / `lg:` 补宽屏**，而不是只做窄屏再指望浏览器缩放。
+2. **表单、设置、个人中心等纵向信息页**：与登录页同一策略——`w-full max-w-100 self-center` 限宽居中，**不要**为 PC 做两栏 / 复杂断点改布局；只保证不拉满超宽屏即可。
+3. **触控与指针都要可用**：可点击区域足够大；Web 上注意 `cursor` / hover（可用 `data-[hover=true]:`）；不要依赖仅移动端手势才能完成的核心操作。
+4. **安全区 + 边距**：`useSafeAreaInsets` 仍要；内容区保留 `px-4` / `px-5` 等，避免贴边。
+5. **弹层宽度克制**：`AlertDialog` / Modal 不要随视口无限变宽。
+6. **自检**：手机宽度 + PC 宽屏各看一眼 Web；PR Test plan 写清验证过的端。
+
+反例：设置页在桌面横向拉满整屏——视为未兼容 PC。
+
+可复用容器：`components/layout/ScreenContainer.tsx`（限宽 + 居中）。
+
+**仅原生能力**（通知权限、触感反馈、推送等）：用 `isNativeApp`（`lib/device/platform.ts`）判断，**Web / H5 不渲染、不请求权限**；相关 UI 放在仅原生挂载的子组件里（如 `NativeDeviceSettings`）。
 
 ## API 请求约定（对齐后端）
 
@@ -123,7 +144,8 @@ pnpm typecheck
 
 - 用户可见文案优先中文
 - 与后端联调时对齐 API 契约；不要在前端硬编码生产密钥
-- 改动 UI 时兼顾 web 与原生（至少确认改动路径在 web 可跑）
+- 改动 UI 时必须兼顾 **Web（含 PC）与原生**，见上方「多端兼容」；至少在 web 窄屏 + 宽屏各看一眼
+- UI 优先复用 gluestack；自建组件要有明确理由（见「必须遵守」第 8 条）
 - 本仓库约定优先于通用 Expo / RN 文档；实现细节不确定时再查官方文档，**不要**把全文拷进仓库或当 skill 安装
 
 ## 文档

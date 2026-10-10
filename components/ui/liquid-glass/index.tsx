@@ -41,7 +41,7 @@ export const GlassView = React.forwardRef<
       ref={ref}
       {...props}
       className={glassViewStyle({
-        className: `bg-background/40 overflow-hidden backdrop-blur-md ${className ?? ''}`,
+        className: `bg-background/55 overflow-hidden backdrop-blur-xl ${className ?? ''}`,
       })}
     />
   ) : (

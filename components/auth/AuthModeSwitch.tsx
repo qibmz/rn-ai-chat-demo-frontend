@@ -12,7 +12,7 @@ type AuthModeSwitchProps = {
 
 export function AuthModeSwitch({ mode, onChange }: AuthModeSwitchProps) {
   return (
-    <Box className="flex-row rounded-full bg-neutral-100 p-1">
+    <Box className="bg-muted flex-row rounded-full p-1">
       {(['login', 'register'] as const).map((item) => {
         const active = mode === item;
         return (
@@ -20,10 +20,12 @@ export function AuthModeSwitch({ mode, onChange }: AuthModeSwitchProps) {
             key={item}
             onPress={() => onChange(item)}
             className={`flex-1 items-center rounded-full py-2.5 ${
-              active ? 'bg-white' : 'bg-transparent'
+              active ? 'bg-card' : 'bg-transparent'
             }`}>
             <Text
-              className={`text-sm font-medium ${active ? 'text-neutral-950' : 'text-neutral-500'}`}>
+              className={`text-sm font-medium ${
+                active ? 'text-foreground' : 'text-muted-foreground'
+              }`}>
               {item === 'login' ? '登录' : '注册'}
             </Text>
           </Pressable>
