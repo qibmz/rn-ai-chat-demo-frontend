@@ -40,7 +40,7 @@ const alertIconStyle = tva({
 });
 
 const StyledUIIcon = styled(UIIcon, {
-  className: "style",
+  className: 'style',
 });
 
 export const UIAlert = createAlert({
@@ -49,46 +49,43 @@ export const UIAlert = createAlert({
   Icon: StyledUIIcon,
 });
 
-type IAlertProps = Omit<
-  React.ComponentPropsWithoutRef<typeof UIAlert>,
-  'context'
-> &
+type IAlertProps = Omit<React.ComponentPropsWithoutRef<typeof UIAlert>, 'context'> &
   VariantProps<typeof alertStyle>;
 
-const Alert = React.forwardRef<React.ComponentRef<typeof UIAlert>, IAlertProps>(
-  function Alert({ className, variant = 'default', ...props }, ref) {
-    return (
-      <UIAlert
-        className={alertStyle({ variant, class: className })}
-        context={{ variant }}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
+const Alert = React.forwardRef<React.ComponentRef<typeof UIAlert>, IAlertProps>(function Alert(
+  { className, variant = 'default', ...props },
+  ref
+) {
+  return (
+    <UIAlert
+      className={alertStyle({ variant, class: className })}
+      context={{ variant }}
+      ref={ref}
+      {...props}
+    />
+  );
+});
 
 type IAlertTextProps = React.ComponentPropsWithoutRef<typeof UIAlert.Text> &
   VariantProps<typeof alertTextStyle>;
 
-const AlertText = React.forwardRef<
-  React.ComponentRef<typeof UIAlert.Text>,
-  IAlertTextProps
->(function AlertText({ className, ...props }, ref) {
-  const { variant: parentVariant } = useStyleContext(SCOPE);
-  return (
-    <UIAlert.Text
-      className={alertTextStyle({
-        class: className,
-        parentVariants: {
-          variant: parentVariant,
-        },
-      })}
-      {...props}
-      ref={ref}
-    />
-  );
-});
+const AlertText = React.forwardRef<React.ComponentRef<typeof UIAlert.Text>, IAlertTextProps>(
+  function AlertText({ className, ...props }, ref) {
+    const { variant: parentVariant } = useStyleContext(SCOPE);
+    return (
+      <UIAlert.Text
+        className={alertTextStyle({
+          class: className,
+          parentVariants: {
+            variant: parentVariant,
+          },
+        })}
+        {...props}
+        ref={ref}
+      />
+    );
+  }
+);
 
 type IAlertIconProps = React.ComponentPropsWithoutRef<typeof UIAlert.Icon> &
   VariantProps<typeof alertIconStyle> & {
@@ -96,24 +93,23 @@ type IAlertIconProps = React.ComponentPropsWithoutRef<typeof UIAlert.Icon> &
     width?: number;
   };
 
-const AlertIcon = React.forwardRef<
-  React.ComponentRef<typeof UIAlert.Icon>,
-  IAlertIconProps
->(function AlertIcon({ className, ...props }, ref) {
-  const { variant: parentVariant } = useStyleContext(SCOPE);
-  return (
-    <UIAlert.Icon
-      className={alertIconStyle({
-        parentVariants: {
-          variant: parentVariant,
-        },
-        class: className,
-      })}
-      {...props}
-      ref={ref}
-    />
-  );
-});
+const AlertIcon = React.forwardRef<React.ComponentRef<typeof UIAlert.Icon>, IAlertIconProps>(
+  function AlertIcon({ className, ...props }, ref) {
+    const { variant: parentVariant } = useStyleContext(SCOPE);
+    return (
+      <UIAlert.Icon
+        className={alertIconStyle({
+          parentVariants: {
+            variant: parentVariant,
+          },
+          class: className,
+        })}
+        {...props}
+        ref={ref}
+      />
+    );
+  }
+);
 
 Alert.displayName = 'Alert';
 AlertText.displayName = 'AlertText';

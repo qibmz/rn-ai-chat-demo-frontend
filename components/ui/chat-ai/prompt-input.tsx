@@ -1,13 +1,6 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Platform } from 'react-native';
@@ -37,10 +30,7 @@ const usePrompt = () => {
 // ====================== ATTACHMENTS ======================
 
 const generateId = (): string => {
-  return (
-    Math.random().toString(36).substring(2) +
-    Math.random().toString(36).substring(2)
-  );
+  return Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 };
 
 export type FileUIPart = {
@@ -62,9 +52,7 @@ export const usePromptInputAttachments = () => {
 
 export const PromptInputProvider = ({ children }: { children: ReactNode }) => {
   const [textInput, setTextInput] = useState('');
-  const [attachmentFiles, setAttachmentFiles] = useState<
-    (FileUIPart & { id: string })[]
-  >([]);
+  const [attachmentFiles, setAttachmentFiles] = useState<(FileUIPart & { id: string })[]>([]);
 
   const add = useCallback((newFiles: any[] | any) => {
     // Accept single object OR array (more flexible)
@@ -107,7 +95,6 @@ export const PromptInputProvider = ({ children }: { children: ReactNode }) => {
           type: 'file' as const,
           url,
         };
-
       });
 
       add(newFiles); // ← now correctly passes array
@@ -126,21 +113,13 @@ export const PromptInputProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return (
-    <AttachmentsContext.Provider value={attachmentsValue}>
-      {children}
-    </AttachmentsContext.Provider>
+    <AttachmentsContext.Provider value={attachmentsValue}>{children}</AttachmentsContext.Provider>
   );
 };
 
 // ====================== REST OF YOUR COMPONENTS (unchanged) ======================
 
-export const PromptInput = ({
-  children,
-  onSubmit,
-}: {
-  children: ReactNode;
-  onSubmit?: any;
-}) => {
+export const PromptInput = ({ children, onSubmit }: { children: ReactNode; onSubmit?: any }) => {
   const [text, setText] = useState('');
   const attachments = usePromptInputAttachments();
 
@@ -172,7 +151,7 @@ export const PromptInput = ({
 };
 
 export const PromptInputBody = ({ children }: { children: ReactNode }) => (
-  <View className="flex-row pt-2 items-center gap-2">{children}</View>
+  <View className="flex-row items-center gap-2 pt-2">{children}</View>
 );
 
 export const PromptInputTextarea = () => {
@@ -183,13 +162,13 @@ export const PromptInputTextarea = () => {
       onChangeText={setText}
       placeholder="Let’s start building it"
       multiline
-      className="flex-1 text-xl px-4 items-center justify-center rounded-3xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-transparent"
+      className="text-foreground placeholder:text-muted-foreground flex-1 items-center justify-center rounded-3xl px-4 text-xl focus:border-transparent focus:ring-0 focus:outline-none"
     />
   );
 };
 
 export const PromptInputFooter = ({ children }: { children: ReactNode }) => (
-  <View className="flex-row items-center justify-between mt-6">{children}</View>
+  <View className="mt-6 flex-row items-center justify-between">{children}</View>
 );
 
 export const PromptInputTools = ({ children }: { children: ReactNode }) => (
@@ -197,7 +176,7 @@ export const PromptInputTools = ({ children }: { children: ReactNode }) => (
 );
 
 export const PromptInputButton = ({ children }: { children: ReactNode }) => (
-  <TouchableOpacity className="px-3 py-1 rounded-full bg-muted">
+  <TouchableOpacity className="bg-muted rounded-full px-3 py-1">
     <Text>{children}</Text>
   </TouchableOpacity>
 );
@@ -208,10 +187,9 @@ export const PromptInputSubmit = () => {
     <TouchableOpacity
       onPress={handleSubmit}
       disabled={isDisabled}
-      className={`h-10 w-10 rounded-full items-center justify-center mx-3 bg-primary ${
+      className={`bg-primary mx-3 h-10 w-10 items-center justify-center rounded-full ${
         isDisabled ? 'opacity-50' : ''
-      }`}
-    >
+      }`}>
       <Text className="text-primary-foreground">↑</Text>
     </TouchableOpacity>
   );
@@ -221,8 +199,8 @@ export const PromptInputActionMenu = ({ children }: any) => <>{children}</>;
 
 export const PromptInputActionMenuTrigger = ({ children, ...props }: any) => (
   <TouchableOpacity {...props}>
-    <View className="h-10 w-10 rounded-full items-center justify-center bg-primary/10">
-      {children ?? <Text className="text-xl text-primary">+</Text>}
+    <View className="bg-primary/10 h-10 w-10 items-center justify-center rounded-full">
+      {children ?? <Text className="text-primary text-xl">+</Text>}
     </View>
   </TouchableOpacity>
 );

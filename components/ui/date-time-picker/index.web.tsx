@@ -19,148 +19,133 @@ interface DateTimePickerProps {
   style?: any;
 }
 
-const DateTimePicker = React.forwardRef<
-  React.ComponentRef<typeof View>,
-  DateTimePickerProps
->(function DateTimePicker(
-  {
-    value,
-    onChange,
-    mode = 'datetime',
-    minimumDate,
-    maximumDate,
-    disabled,
-    placeholder = 'Select date/time',
-    className,
-    style,
-  },
-  ref
-) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [tempDate, setTempDate] = useState<Date | undefined>(value);
-  const [tempTime, setTempTime] = useState(
-    value ? formatTimeForInput(value) : ''
-  );
+const DateTimePicker = React.forwardRef<React.ComponentRef<typeof View>, DateTimePickerProps>(
+  function DateTimePicker(
+    {
+      value,
+      onChange,
+      mode = 'datetime',
+      minimumDate,
+      maximumDate,
+      disabled,
+      placeholder = 'Select date/time',
+      className,
+      style,
+    },
+    ref
+  ) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [tempDate, setTempDate] = useState<Date | undefined>(value);
+    const [tempTime, setTempTime] = useState(value ? formatTimeForInput(value) : '');
 
-  const handleDateSelect = useCallback(
-    (date: Date | Date[] | { from: Date; to: Date }) => {
-      if (date instanceof Date) {
-        setTempDate(date);
-        if (mode === 'date') {
-          onChange?.(date);
-          setIsOpen(false);
+    const handleDateSelect = useCallback(
+      (date: Date | Date[] | { from: Date; to: Date }) => {
+        if (date instanceof Date) {
+          setTempDate(date);
+          if (mode === 'date') {
+            onChange?.(date);
+            setIsOpen(false);
+          }
+        }
+      },
+      [mode, onChange]
+    );
+
+    const handleTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      setTempTime(e.target.value);
+    }, []);
+
+    const handleConfirm = useCallback(() => {
+      if (mode === 'time' && tempTime) {
+        const [hours, minutes] = tempTime.split(':').map(Number);
+        const newDate = new Date();
+        newDate.setHours(hours, minutes, 0, 0);
+        onChange?.(newDate);
+      } else if (tempDate) {
+        if (mode === 'datetime' && tempTime) {
+          const [hours, minutes] = tempTime.split(':').map(Number);
+          const combinedDate = new Date(tempDate);
+          combinedDate.setHours(hours, minutes, 0, 0);
+          onChange?.(combinedDate);
+        } else {
+          onChange?.(tempDate);
         }
       }
-    },
-    [mode, onChange]
-  );
+      setIsOpen(false);
+    }, [mode, tempDate, tempTime, onChange]);
 
-  const handleTimeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTempTime(e.target.value);
-    },
-    []
-  );
+    const handleCancel = useCallback(() => {
+      setTempDate(value);
+      setTempTime(value ? formatTimeForInput(value) : '');
+      setIsOpen(false);
+    }, [value]);
 
-  const handleConfirm = useCallback(() => {
-    if (mode === 'time' && tempTime) {
-      const [hours, minutes] = tempTime.split(':').map(Number);
-      const newDate = new Date();
-      newDate.setHours(hours, minutes, 0, 0);
-      onChange?.(newDate);
-    } else if (tempDate) {
-      if (mode === 'datetime' && tempTime) {
-        const [hours, minutes] = tempTime.split(':').map(Number);
-        const combinedDate = new Date(tempDate);
-        combinedDate.setHours(hours, minutes, 0, 0);
-        onChange?.(combinedDate);
-      } else {
-        onChange?.(tempDate);
-      }
-    }
-    setIsOpen(false);
-  }, [mode, tempDate, tempTime, onChange]);
+    const displayValue = useMemo(() => {
+      if (!value) return '';
+      if (mode === 'time') return formatTimeForInput(value);
+      if (mode === 'date') return formatDate(value);
+      return `${formatDate(value)} ${formatTimeForInput(value)}`;
+    }, [value, mode]);
 
-  const handleCancel = useCallback(() => {
-    setTempDate(value);
-    setTempTime(value ? formatTimeForInput(value) : '');
-    setIsOpen(false);
-  }, [value]);
-
-  const displayValue = useMemo(() => {
-    if (!value) return '';
-    if (mode === 'time') return formatTimeForInput(value);
-    if (mode === 'date') return formatDate(value);
-    return `${formatDate(value)} ${formatTimeForInput(value)}`;
-  }, [value, mode]);
-
-  return (
-    <View ref={ref} className={`relative ${className || ''}`} style={style}>
-      {/* Trigger Input */}
-      <Pressable
-        onPress={() => !disabled && setIsOpen(true)}
-        className="w-full"
-      >
-        <View className="flex-row items-center border border-border rounded-md px-3 py-2 bg-background">
-          <TextInput
-            value={displayValue || placeholder}
-            editable={false}
-            className="flex-1 text-foreground text-sm"
-            pointerEvents="none"
-          />
-        </View>
-      </Pressable>
-
-      {/* Modal/Dropdown */}
-      {isOpen && (
-        <View className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
-          {/* Date Picker */}
-          {(mode === 'date' || mode === 'datetime') && (
-            <View className="mb-4">
-              <Calendar
-                mode="single"
-                selected={tempDate}
-                onSelect={handleDateSelect}
-                initialDate={tempDate}
-                minDate={minimumDate}
-                maxDate={maximumDate}
-              />
-            </View>
-          )}
-
-          {/* Time Picker */}
-          {(mode === 'time' || mode === 'datetime') && (
-            <View className="mb-4">
-              <input
-                type="time"
-                value={tempTime}
-                onChange={handleTimeChange}
-                className="w-full p-2 border border-border rounded bg-background text-foreground text-sm"
-                aria-label="Time"
-              />
-            </View>
-          )}
-
-          {/* Actions */}
-          <View className="flex-row justify-end gap-2">
-            <Pressable
-              onPress={handleCancel}
-              className="px-4 py-2 rounded bg-muted"
-            >
-              <span className="text-muted-foreground text-sm">Cancel</span>
-            </Pressable>
-            <Pressable
-              onPress={handleConfirm}
-              className="px-4 py-2 rounded bg-primary"
-            >
-              <span className="text-primary-foreground text-sm">Confirm</span>
-            </Pressable>
+    return (
+      <View ref={ref} className={`relative ${className || ''}`} style={style}>
+        {/* Trigger Input */}
+        <Pressable onPress={() => !disabled && setIsOpen(true)} className="w-full">
+          <View className="border-border bg-background flex-row items-center rounded-md border px-3 py-2">
+            <TextInput
+              value={displayValue || placeholder}
+              editable={false}
+              className="text-foreground flex-1 text-sm"
+              pointerEvents="none"
+            />
           </View>
-        </View>
-      )}
-    </View>
-  );
-});
+        </Pressable>
+
+        {/* Modal/Dropdown */}
+        {isOpen && (
+          <View className="bg-background border-border absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border p-4 shadow-lg">
+            {/* Date Picker */}
+            {(mode === 'date' || mode === 'datetime') && (
+              <View className="mb-4">
+                <Calendar
+                  mode="single"
+                  selected={tempDate}
+                  onSelect={handleDateSelect}
+                  initialDate={tempDate}
+                  minDate={minimumDate}
+                  maxDate={maximumDate}
+                />
+              </View>
+            )}
+
+            {/* Time Picker */}
+            {(mode === 'time' || mode === 'datetime') && (
+              <View className="mb-4">
+                <input
+                  type="time"
+                  value={tempTime}
+                  onChange={handleTimeChange}
+                  className="border-border bg-background text-foreground w-full rounded border p-2 text-sm"
+                  aria-label="Time"
+                />
+              </View>
+            )}
+
+            {/* Actions */}
+            <View className="flex-row justify-end gap-2">
+              <Pressable onPress={handleCancel} className="bg-muted rounded px-4 py-2">
+                <span className="text-muted-foreground text-sm">Cancel</span>
+              </Pressable>
+              <Pressable onPress={handleConfirm} className="bg-primary rounded px-4 py-2">
+                <span className="text-primary-foreground text-sm">Confirm</span>
+              </Pressable>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  }
+);
 
 // Helper functions
 function formatDate(date: Date): string {
@@ -203,10 +188,5 @@ const DateTimePickerIcon = React.forwardRef<
   return <PrimitiveIcon ref={ref} {...props} />;
 });
 
-export {
-  DateTimePicker,
-  DateTimePickerTrigger,
-  DateTimePickerInput,
-  DateTimePickerIcon,
-};
+export { DateTimePicker, DateTimePickerTrigger, DateTimePickerInput, DateTimePickerIcon };
 export type { DateTimePickerProps, DateTimePickerMode };

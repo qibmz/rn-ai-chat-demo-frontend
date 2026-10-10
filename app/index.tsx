@@ -6,12 +6,11 @@ import React from 'react';
 
 export default function Home() {
   return (
-    <Box className="flex-1 bg-background">
+    <Box className="bg-background flex-1">
       <Center className="flex-1 gap-5">
         <Logo />
         <Text className="font-semibold">
-          Get started by editing{' '}
-          <Text className="text-primary/70">app/index.tsx</Text>
+          Get started by editing <Text className="text-primary/70">app/index.tsx</Text>
         </Text>
       </Center>
     </Box>

@@ -1,9 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  type ReactElement,
-} from 'react';
+import React, { useRef, useCallback, useEffect, type ReactElement } from 'react';
 import { GestureDetector } from 'react-native-gesture-handler';
 import { useKeyboardAwareChat } from './useKeyboardAwareChat';
 import {
@@ -26,9 +21,7 @@ import { AnimatedLegendList } from '@legendapp/list/reanimated';
 
 export const Conversation = ({ children, className }: ConversationProps) => (
   <BlankProvider>
-    <View className={`flex-1 bg-background px-4 ${className || ''}`}>
-      {children}
-    </View>
+    <View className={`bg-background flex-1 px-4 ${className || ''}`}>{children}</View>
   </BlankProvider>
 );
 
@@ -42,11 +35,11 @@ export type ConversationEmptyStateProps = {
 export const ConversationEmptyState = ({
   title = 'Start a conversation',
   description = 'Type a message below to begin chatting',
-  icon, 
+  icon,
   className,
 }: ConversationEmptyStateProps) => (
-  <View className={`flex-1  items-center justify-center   ${className || ''}`}>
-    <Text className="mt-4 text-3xl font-semibold text-foreground">{title}</Text>
+  <View className={`flex-1 items-center justify-center ${className || ''}`}>
+    <Text className="text-foreground mt-4 text-3xl font-semibold">{title}</Text>
   </View>
 );
 
@@ -86,8 +79,7 @@ export const ConversationContent = ({
 
   useEffect(() => {
     const shouldScroll =
-      messages.length > prevLengthRef.current &&
-      messages[messages.length - 1].role === 'user';
+      messages.length > prevLengthRef.current && messages[messages.length - 1].role === 'user';
 
     if (shouldScroll && Platform.OS !== 'web') {
       flatListRef.current?.scrollToEnd?.();
@@ -97,24 +89,20 @@ export const ConversationContent = ({
 
   const { messagesContainerHeight } = useBlankContext();
 
-
-
   return (
-   
     <View
       className="flex-1"
       onLayout={(e) => {
         const height = e.nativeEvent.layout.height;
         messagesContainerHeight.value = height;
-      }}
-    >
+      }}>
       {messages.length === 0 ? (
         <ConversationEmptyState />
       ) : (
         <AnimatedLegendList
           ref={flatListRef}
           data={messages}
-        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+          keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
           showsVerticalScrollIndicator={false}
           renderItem={renderItem || defaultRenderItem}
           keyExtractor={(item) => item.id}
@@ -131,25 +119,20 @@ export const ConversationContent = ({
         />
       )}
     </View>
-  
   );
 };
-
 
 export const ConversationScrollButton = () => (
   <TouchableOpacity
     onPress={() => {}}
-    className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary h-11 w-11 items-center justify-center rounded-full shadow-lg"
-  >
+    className="bg-primary absolute bottom-6 left-1/2 h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full shadow-lg">
     <ArrowDown size={22} className="text-primary-foreground" />
   </TouchableOpacity>
 );
 
 export type ConversationDownloadProps = { messages: UIMessage[] };
 
-export const ConversationDownload = ({
-  messages,
-}: ConversationDownloadProps) => {
+export const ConversationDownload = ({ messages }: ConversationDownloadProps) => {
   const handleDownload = useCallback(() => {
     const markdown = messages
       .map((msg) => {
@@ -167,8 +150,7 @@ export const ConversationDownload = ({
   return (
     <TouchableOpacity
       onPress={handleDownload}
-      className="absolute top-4 right-4 bg-card p-3 rounded-2xl shadow-sm"
-    >
+      className="bg-card absolute top-4 right-4 rounded-2xl p-3 shadow-sm">
       <Download size={20} className="text-muted-foreground" />
     </TouchableOpacity>
   );

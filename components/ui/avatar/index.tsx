@@ -34,45 +34,30 @@ const avatarImageStyle = tva({
   base: 'h-full w-full rounded-full absolute',
 });
 
-type IAvatarProps = Omit<
-  React.ComponentPropsWithoutRef<typeof UIAvatar>,
-  'context'
-> &
+type IAvatarProps = Omit<React.ComponentPropsWithoutRef<typeof UIAvatar>, 'context'> &
   VariantProps<typeof avatarStyle>;
 
-const Avatar = React.forwardRef<
-  React.ComponentRef<typeof UIAvatar>,
-  IAvatarProps
->(function Avatar({ className, ...props }, ref) {
+const Avatar = React.forwardRef<React.ComponentRef<typeof UIAvatar>, IAvatarProps>(function Avatar(
+  { className, ...props },
+  ref
+) {
   return (
-    <UIAvatar
-      ref={ref}
-      {...props}
-      className={avatarStyle({ class: className })}
-      context={{}}
-    />
+    <UIAvatar ref={ref} {...props} className={avatarStyle({ class: className })} context={{}} />
   );
 });
 
 type IAvatarBadgeProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Badge> &
   VariantProps<typeof avatarBadgeStyle>;
 
-const AvatarBadge = React.forwardRef<
-  React.ComponentRef<typeof UIAvatar.Badge>,
-  IAvatarBadgeProps
->(function AvatarBadge({ className, ...props }, ref) {
-  return (
-    <UIAvatar.Badge
-      ref={ref}
-      {...props}
-      className={avatarBadgeStyle({ class: className })}
-    />
-  );
-});
+const AvatarBadge = React.forwardRef<React.ComponentRef<typeof UIAvatar.Badge>, IAvatarBadgeProps>(
+  function AvatarBadge({ className, ...props }, ref) {
+    return (
+      <UIAvatar.Badge ref={ref} {...props} className={avatarBadgeStyle({ class: className })} />
+    );
+  }
+);
 
-type IAvatarFallbackTextProps = React.ComponentPropsWithoutRef<
-  typeof UIAvatar.FallbackText
-> &
+type IAvatarFallbackTextProps = React.ComponentPropsWithoutRef<typeof UIAvatar.FallbackText> &
   VariantProps<typeof avatarFallbackTextStyle>;
 const AvatarFallbackText = React.forwardRef<
   React.ComponentRef<typeof UIAvatar.FallbackText>,
@@ -90,49 +75,40 @@ const AvatarFallbackText = React.forwardRef<
 type IAvatarImageProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Image> &
   VariantProps<typeof avatarImageStyle>;
 
-const AvatarImage = React.forwardRef<
-  React.ComponentRef<typeof UIAvatar.Image>,
-  IAvatarImageProps
->(function AvatarImage({ className, ...props }, ref) {
-  return (
-    <UIAvatar.Image
-      ref={ref}
-      {...props}
-      className={avatarImageStyle({
-        class: className,
-      })}
-      // @ts-expect-error - resizeMode is React Native specific
-      resizeMode="cover"
-    />
-  );
-});
+const AvatarImage = React.forwardRef<React.ComponentRef<typeof UIAvatar.Image>, IAvatarImageProps>(
+  function AvatarImage({ className, ...props }, ref) {
+    return (
+      <UIAvatar.Image
+        ref={ref}
+        {...props}
+        className={avatarImageStyle({
+          class: className,
+        })}
+        // @ts-expect-error - resizeMode is React Native specific
+        resizeMode="cover"
+      />
+    );
+  }
+);
 
 type IAvatarGroupProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Group> &
   VariantProps<typeof avatarGroupStyle>;
 
-const AvatarGroup = React.forwardRef<
-  React.ComponentRef<typeof UIAvatar.Group>,
-  IAvatarGroupProps
->(function AvatarGroup({ className, ...props }, ref) {
-  return (
-    <UIAvatar.Group
-      ref={ref}
-      {...props}
-      className={avatarGroupStyle({
-        class: className,
-      })}
-    />
-  );
-});
+const AvatarGroup = React.forwardRef<React.ComponentRef<typeof UIAvatar.Group>, IAvatarGroupProps>(
+  function AvatarGroup({ className, ...props }, ref) {
+    return (
+      <UIAvatar.Group
+        ref={ref}
+        {...props}
+        className={avatarGroupStyle({
+          class: className,
+        })}
+      />
+    );
+  }
+);
 
 // Alias for shadcn compatibility
 const AvatarFallback = AvatarFallbackText;
 
-export {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarFallbackText,
-  AvatarGroup,
-  AvatarImage
-};
+export { Avatar, AvatarBadge, AvatarFallback, AvatarFallbackText, AvatarGroup, AvatarImage };

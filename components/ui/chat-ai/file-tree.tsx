@@ -7,17 +7,8 @@ import React, {
   type ReactNode,
 } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import {
-  ChevronRight,
-  File as FileIcon,
-  Folder,
-  FolderOpen,
-} from 'lucide-react-native';
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from 'react-native-reanimated';
+import { ChevronRight, File as FileIcon, Folder, FolderOpen } from 'lucide-react-native';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 
 // ====================== Custom Collapsible ======================
 
@@ -29,10 +20,13 @@ type CollapsibleProps = {
 const Collapsible = ({ open, children }: CollapsibleProps) => {
   const progress = useSharedValue(open ? 1 : 0);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: progress.value,
-    maxHeight: progress.value * 9999,
-  }),[progress.value]);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: progress.value,
+      maxHeight: progress.value * 9999,
+    }),
+    [progress.value]
+  );
 
   React.useEffect(() => {
     progress.value = withTiming(open ? 1 : 0, { duration: 180 });
@@ -114,8 +108,7 @@ export const FileTree = ({
   return (
     <FileTreeContext.Provider value={contextValue}>
       <View
-        className={`bg-background rounded-xl border border-border overflow-hidden ${className || ''}`}
-      >
+        className={`bg-background border-border overflow-hidden rounded-xl border ${className || ''}`}>
         <View className="p-2">{children}</View>
       </View>
     </FileTreeContext.Provider>
@@ -131,14 +124,8 @@ export type FileTreeFolderProps = {
   className?: string;
 };
 
-export const FileTreeFolder = ({
-  path,
-  name,
-  children,
-  className,
-}: FileTreeFolderProps) => {
-  const { expandedPaths, togglePath, selectedPath, onSelect } =
-    useContext(FileTreeContext);
+export const FileTreeFolder = ({ path, name, children, className }: FileTreeFolderProps) => {
+  const { expandedPaths, togglePath, selectedPath, onSelect } = useContext(FileTreeContext);
 
   const isExpanded = expandedPaths.has(path);
   const isSelected = selectedPath === path;
@@ -146,24 +133,16 @@ export const FileTreeFolder = ({
   const handleToggle = useCallback(() => togglePath(path), [togglePath, path]);
   const handleSelect = useCallback(() => onSelect?.(path), [onSelect, path]);
 
-  const folderContextValue = useMemo(
-    () => ({ isExpanded, name, path }),
-    [isExpanded, name, path]
-  );
+  const folderContextValue = useMemo(() => ({ isExpanded, name, path }), [isExpanded, name, path]);
 
   return (
     <FileTreeFolderContext.Provider value={folderContextValue}>
       <View className={className}>
         <TouchableOpacity
-          className={`flex-row items-center py-1.5 px-2 rounded-md ${isSelected ? 'bg-accent' : ''}`}
+          className={`flex-row items-center rounded-md px-2 py-1.5 ${isSelected ? 'bg-accent' : ''}`}
           onPress={handleSelect}
-          activeOpacity={0.7}
-        >
-          <TouchableOpacity
-            onPress={handleToggle}
-            className="p-1"
-            activeOpacity={0.7}
-          >
+          activeOpacity={0.7}>
+          <TouchableOpacity onPress={handleToggle} className="p-1" activeOpacity={0.7}>
             <ChevronRight
               size={18}
               className="text-muted-foreground"
@@ -172,23 +151,22 @@ export const FileTreeFolder = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="flex-row items-center flex-1 gap-2"
+            className="flex-1 flex-row items-center gap-2"
             onPress={handleSelect}
-            activeOpacity={0.7}
-          >
+            activeOpacity={0.7}>
             {isExpanded ? (
               <FolderOpen size={18} className="text-primary" />
             ) : (
               <Folder size={18} className="text-primary" />
             )}
-            <Text className="text-sm text-foreground flex-1" numberOfLines={1}>
+            <Text className="text-foreground flex-1 text-sm" numberOfLines={1}>
               {name}
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
 
         <Collapsible open={isExpanded}>
-          <View className="ml-6 pl-1 border-l border-border">{children}</View>
+          <View className="border-border ml-6 border-l pl-1">{children}</View>
         </Collapsible>
       </View>
     </FileTreeFolderContext.Provider>
@@ -204,12 +182,7 @@ export type FileTreeFileProps = {
   className?: string;
 };
 
-export const FileTreeFile = ({
-  path,
-  name,
-  icon,
-  className,
-}: FileTreeFileProps) => {
+export const FileTreeFile = ({ path, name, icon, className }: FileTreeFileProps) => {
   const { selectedPath, onSelect } = useContext(FileTreeContext);
   const isSelected = selectedPath === path;
 
@@ -217,14 +190,13 @@ export const FileTreeFile = ({
 
   return (
     <TouchableOpacity
-      className={`flex-row items-center py-1.5 px-2 rounded-md ${isSelected ? 'bg-accent' : ''} ${className || ''}`}
+      className={`flex-row items-center rounded-md px-2 py-1.5 ${isSelected ? 'bg-accent' : ''} ${className || ''}`}
       onPress={handlePress}
-      activeOpacity={0.7}
-    >
+      activeOpacity={0.7}>
       <View className="w-6.5" />
-      <View className="flex-row items-center gap-2 flex-1">
+      <View className="flex-1 flex-row items-center gap-2">
         {icon ?? <FileIcon size={18} className="text-muted-foreground" />}
-        <Text className="text-sm text-foreground flex-1" numberOfLines={1}>
+        <Text className="text-foreground flex-1 text-sm" numberOfLines={1}>
           {name}
         </Text>
       </View>
@@ -242,10 +214,6 @@ export const FileTreeActions = ({
   className?: string;
 }) => {
   return (
-    <View
-      className={`ml-auto flex-row items-center gap-1.5 ${className || ''}`}
-    >
-      {children}
-    </View>
+    <View className={`ml-auto flex-row items-center gap-1.5 ${className || ''}`}>{children}</View>
   );
 };

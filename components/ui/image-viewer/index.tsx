@@ -22,11 +22,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Overlay } from '@gluestack-ui/core/overlay/creator';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -203,14 +199,8 @@ const ZoomableImage = React.memo(
         const newTranslateY = savedTranslateY.value + event.translationY;
 
         // Clamp to bounds
-        translateX.value = Math.max(
-          -maxTranslateX,
-          Math.min(maxTranslateX, newTranslateX)
-        );
-        translateY.value = Math.max(
-          -maxTranslateY,
-          Math.min(maxTranslateY, newTranslateY)
-        );
+        translateX.value = Math.max(-maxTranslateX, Math.min(maxTranslateX, newTranslateX));
+        translateY.value = Math.max(-maxTranslateY, Math.min(maxTranslateY, newTranslateY));
       })
       .onEnd((event) => {
         const maxTranslateX = ((scale.value - 1) * SCREEN_WIDTH) / 2;
@@ -221,11 +211,7 @@ const ZoomableImage = React.memo(
         const swipeThreshold = 50;
 
         // If at edge and swiped with enough velocity/distance, navigate
-        if (
-          isAtLeftEdge &&
-          event.translationX > swipeThreshold &&
-          event.velocityX > 0
-        ) {
+        if (isAtLeftEdge && event.translationX > swipeThreshold && event.velocityX > 0) {
           // At left edge, swiped right -> go to previous
           runOnJS(onSwipeRight)();
           // Reset zoom after navigation
@@ -236,11 +222,7 @@ const ZoomableImage = React.memo(
           savedTranslateX.value = 0;
           savedTranslateY.value = 0;
           if (onZoomChange) runOnJS(onZoomChange)(false);
-        } else if (
-          isAtRightEdge &&
-          event.translationX < -swipeThreshold &&
-          event.velocityX < 0
-        ) {
+        } else if (isAtRightEdge && event.translationX < -swipeThreshold && event.velocityX < 0) {
           // At right edge, swiped left -> go to next
           runOnJS(onSwipeLeft)();
           // Reset zoom after navigation
@@ -264,15 +246,9 @@ const ZoomableImage = React.memo(
       .activeOffsetY([-10, 10]) // Activate only for vertical movement
       .failOffsetX([-20, 20]) // Fail if horizontal movement is too much
       .onUpdate((event) => {
-        dismissProgress.value =
-          Math.abs(event.translationY) / (SCREEN_HEIGHT * 0.3);
+        dismissProgress.value = Math.abs(event.translationY) / (SCREEN_HEIGHT * 0.3);
         translateY.value = event.translationY;
-        opacity.value = interpolate(
-          dismissProgress.value,
-          [0, 1],
-          [1, 0.3],
-          Extrapolate.CLAMP
-        );
+        opacity.value = interpolate(dismissProgress.value, [0, 1], [1, 0.3], Extrapolate.CLAMP);
       })
       .onEnd((event) => {
         if (Math.abs(event.translationY) > 120) {
@@ -324,10 +300,7 @@ const ZoomableImage = React.memo(
 
     const composedGesture = Gesture.Race(
       doubleTapGesture,
-      Gesture.Simultaneous(
-        pinchGesture,
-        Gesture.Exclusive(panGesture, dismissGesture)
-      )
+      Gesture.Simultaneous(pinchGesture, Gesture.Exclusive(panGesture, dismissGesture))
     );
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -345,10 +318,7 @@ const ZoomableImage = React.memo(
           source={{ uri: image.url }}
           alt={image.alt}
           resizeMode="contain"
-          style={[
-            { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.8 },
-            animatedStyle,
-          ]}
+          style={[{ width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.8 }, animatedStyle]}
         />
       </GestureDetector>
     );
@@ -411,11 +381,7 @@ const SlidableImageGallery = React.memo(function SlidableImageGallery({
       const contentOffsetX = event.nativeEvent.contentOffset.x;
       const newIndex = Math.round(contentOffsetX / SCREEN_WIDTH);
 
-      if (
-        newIndex !== localIndex &&
-        newIndex >= 0 &&
-        newIndex < images.length
-      ) {
+      if (newIndex !== localIndex && newIndex >= 0 && newIndex < images.length) {
         setLocalIndex(newIndex);
         prevCurrentIndexRef.current = newIndex; // Update ref to prevent effect from scrolling back
         onIndexChange(newIndex);
@@ -477,10 +443,7 @@ const SlidableImageGallery = React.memo(function SlidableImageGallery({
   );
 
   return (
-    <View
-      style={{ width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.8 }}
-      className="web:my-auto"
-    >
+    <View style={{ width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.8 }} className="web:my-auto">
       <FlatList
         ref={flatListRef}
         data={images}
@@ -506,73 +469,69 @@ const SlidableImageGallery = React.memo(function SlidableImageGallery({
 });
 
 // Main ImageViewer Component
-const ImageViewer = React.forwardRef<View, ImageViewerProps>(
-  function ImageViewer(
-    {
+const ImageViewer = React.forwardRef<View, ImageViewerProps>(function ImageViewer(
+  {
+    images,
+    defaultOpen = false,
+    isOpen: controlledIsOpen,
+    onOpenChange,
+    onIndexChange,
+    initialIndex = 0,
+    children,
+  },
+  ref
+) {
+  const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(defaultOpen);
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  const isControlled = controlledIsOpen !== undefined;
+  const isOpen = isControlled ? controlledIsOpen : uncontrolledIsOpen;
+
+  useEffect(() => {
+    onIndexChange?.(currentIndex);
+  }, [currentIndex, onIndexChange]);
+
+  const open = useCallback(() => {
+    if (!isControlled) {
+      setUncontrolledIsOpen(true);
+    }
+    onOpenChange?.(true);
+  }, [isControlled, onOpenChange]);
+
+  const close = useCallback(() => {
+    if (!isControlled) {
+      setUncontrolledIsOpen(false);
+    }
+    onOpenChange?.(false);
+  }, [isControlled, onOpenChange]);
+
+  const goNext = useCallback(() => {
+    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1));
+  }, [images.length]);
+
+  const goPrevious = useCallback(() => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
+
+  const contextValue = React.useMemo(
+    () => ({
       images,
-      defaultOpen = false,
-      isOpen: controlledIsOpen,
-      onOpenChange,
-      onIndexChange,
-      initialIndex = 0,
-      children,
-    },
-    ref
-  ) {
-    const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(defaultOpen);
-    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+      currentIndex,
+      isOpen,
+      open,
+      close,
+      goNext,
+      goPrevious,
+    }),
+    [images, currentIndex, isOpen, open, close, goNext, goPrevious]
+  );
 
-    const isControlled = controlledIsOpen !== undefined;
-    const isOpen = isControlled ? controlledIsOpen : uncontrolledIsOpen;
-
-    useEffect(() => {
-      onIndexChange?.(currentIndex);
-    }, [currentIndex, onIndexChange]);
-
-    const open = useCallback(() => {
-      if (!isControlled) {
-        setUncontrolledIsOpen(true);
-      }
-      onOpenChange?.(true);
-    }, [isControlled, onOpenChange]);
-
-    const close = useCallback(() => {
-      if (!isControlled) {
-        setUncontrolledIsOpen(false);
-      }
-      onOpenChange?.(false);
-    }, [isControlled, onOpenChange]);
-
-    const goNext = useCallback(() => {
-      setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1));
-    }, [images.length]);
-
-    const goPrevious = useCallback(() => {
-      setCurrentIndex((prev) => Math.max(prev - 1, 0));
-    }, []);
-
-    const contextValue = React.useMemo(
-      () => ({
-        images,
-        currentIndex,
-        isOpen,
-        open,
-        close,
-        goNext,
-        goPrevious,
-      }),
-      [images, currentIndex, isOpen, open, close, goNext, goPrevious]
-    );
-
-    return (
-      <View ref={ref} className={imageViewerStyle({})}>
-        <ImageViewerContext.Provider value={contextValue}>
-          {children}
-        </ImageViewerContext.Provider>
-      </View>
-    );
-  }
-);
+  return (
+    <View ref={ref} className={imageViewerStyle({})}>
+      <ImageViewerContext.Provider value={contextValue}>{children}</ImageViewerContext.Provider>
+    </View>
+  );
+});
 
 // Trigger Component
 const ImageViewerTrigger = React.forwardRef<
@@ -595,65 +554,58 @@ const ImageViewerTrigger = React.forwardRef<
 
 // Content Component (Uses gluestack Overlay for proper portal rendering)
 // Context provider is placed INSIDE the Overlay so portaled content has access
-const ImageViewerContent = React.forwardRef<
-  View,
-  { children?: React.ReactNode }
->(function ImageViewerContent({ children }, ref) {
-  const context = useImageViewerContext();
-  const { images, currentIndex, isOpen, close, goNext, goPrevious } = context;
-  const currentImage = images[currentIndex];
+const ImageViewerContent = React.forwardRef<View, { children?: React.ReactNode }>(
+  function ImageViewerContent({ children }, ref) {
+    const context = useImageViewerContext();
+    const { images, currentIndex, isOpen, close, goNext, goPrevious } = context;
+    const currentImage = images[currentIndex];
 
-  return (
-    <Overlay
-      isOpen={isOpen}
-      onRequestClose={close}
-      isKeyboardDismissable={true}
-    >
-      <ImageViewerContext.Provider value={context}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <AnimatedView
-            entering={FadeIn.duration(300).easing(Easing.out(Easing.ease))}
-            exiting={FadeOut.duration(200).easing(Easing.in(Easing.ease))}
-            className={imageViewerModalStyle({})}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <View
-              ref={ref}
-              className={imageViewerContentStyle({})}
+    return (
+      <Overlay isOpen={isOpen} onRequestClose={close} isKeyboardDismissable={true}>
+        <ImageViewerContext.Provider value={context}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <AnimatedView
+              entering={FadeIn.duration(300).easing(Easing.out(Easing.ease))}
+              exiting={FadeOut.duration(200).easing(Easing.in(Easing.ease))}
+              className={imageViewerModalStyle({})}
               style={{
-                width: '100%',
-                height: '100%',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}
-            >
-              {currentImage && (
-                <SlidableImageGallery
-                  images={images}
-                  currentIndex={currentIndex}
-                  onIndexChange={(newIndex) => {
-                    if (newIndex > currentIndex) {
-                      goNext();
-                    } else if (newIndex < currentIndex) {
-                      goPrevious();
-                    }
-                  }}
-                  onDismiss={close}
-                />
-              )}
-              {children}
-            </View>
-          </AnimatedView>
-        </GestureHandlerRootView>
-      </ImageViewerContext.Provider>
-    </Overlay>
-  );
-});
+              }}>
+              <View
+                ref={ref}
+                className={imageViewerContentStyle({})}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {currentImage && (
+                  <SlidableImageGallery
+                    images={images}
+                    currentIndex={currentIndex}
+                    onIndexChange={(newIndex) => {
+                      if (newIndex > currentIndex) {
+                        goNext();
+                      } else if (newIndex < currentIndex) {
+                        goPrevious();
+                      }
+                    }}
+                    onDismiss={close}
+                  />
+                )}
+                {children}
+              </View>
+            </AnimatedView>
+          </GestureHandlerRootView>
+        </ImageViewerContext.Provider>
+      </Overlay>
+    );
+  }
+);
 
 // Close Button Component
 const ImageViewerCloseButton = React.forwardRef<
@@ -669,9 +621,8 @@ const ImageViewerCloseButton = React.forwardRef<
       className={imageViewerCloseButtonStyle({ class: className })}
       accessibilityLabel="Close image viewer"
       accessibilityRole="button"
-      {...props}
-    >
-      <Text className="text-white text-xl font-bold">✕</Text>
+      {...props}>
+      <Text className="text-xl font-bold text-white">✕</Text>
     </TouchableOpacity>
   );
 });
@@ -679,25 +630,20 @@ const ImageViewerCloseButton = React.forwardRef<
 // Navigation Component
 const ImageViewerNavigation = React.forwardRef<View, { className?: string }>(
   function ImageViewerNavigation({ className }, ref) {
-    const { goPrevious, goNext, currentIndex, images } =
-      useImageViewerContext();
+    const { goPrevious, goNext, currentIndex, images } = useImageViewerContext();
 
     const canGoPrevious = currentIndex > 0;
     const canGoNext = currentIndex < images.length - 1;
 
     return (
-      <View
-        ref={ref}
-        className={imageViewerNavigationStyle({ class: className })}
-      >
+      <View ref={ref} className={imageViewerNavigationStyle({ class: className })}>
         {canGoPrevious && (
           <TouchableOpacity
             onPress={goPrevious}
             className={imageViewerNavButtonStyle({})}
             accessibilityLabel="Previous image"
-            accessibilityRole="button"
-          >
-            <Text className="text-white text-2xl font-bold">‹</Text>
+            accessibilityRole="button">
+            <Text className="text-2xl font-bold text-white">‹</Text>
           </TouchableOpacity>
         )}
         <View className="flex-1" />
@@ -706,9 +652,8 @@ const ImageViewerNavigation = React.forwardRef<View, { className?: string }>(
             onPress={goNext}
             className={imageViewerNavButtonStyle({})}
             accessibilityLabel="Next image"
-            accessibilityRole="button"
-          >
-            <Text className="text-white text-2xl font-bold">›</Text>
+            accessibilityRole="button">
+            <Text className="text-2xl font-bold text-white">›</Text>
           </TouchableOpacity>
         )}
       </View>

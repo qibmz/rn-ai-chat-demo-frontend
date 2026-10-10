@@ -3,13 +3,8 @@ import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { MoonIcon, SunIcon } from '@/components/ui/icon';
 import '@/global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from 'expo-router';
 import { useFonts } from 'expo-font';
-import { Slot, usePathname } from 'expo-router';
+import { DarkTheme, DefaultTheme, Slot, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -43,9 +38,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const pathname = usePathname();
-  const [colorMode, setColorMode] = useState<'light' | 'dark' | 'system'>(
-    'dark'
-  );
+  const [colorMode, setColorMode] = useState<'light' | 'dark' | 'system'>('dark');
 
   return (
     <ThemeProvider value={colorMode === 'dark' ? DarkTheme : DefaultTheme}>
@@ -55,12 +48,9 @@ function RootLayoutNav() {
           <Slot />
           {pathname === '/' && (
             <Fab
-              onPress={() =>
-                setColorMode(colorMode === 'dark' ? 'light' : 'dark')
-              }
+              onPress={() => setColorMode(colorMode === 'dark' ? 'light' : 'dark')}
               className="m-6"
-              size="lg"
-            >
+              size="lg">
               <FabIcon as={colorMode === 'dark' ? MoonIcon : SunIcon} />
             </Fab>
           )}

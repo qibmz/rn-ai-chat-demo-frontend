@@ -7,21 +7,11 @@ import {
 } from '@gluestack-ui/core/date-time-picker/creator';
 import { UIIcon } from '@gluestack-ui/core/icon/creator';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import {
-  useStyleContext,
-  withStyleContext,
-} from '@gluestack-ui/utils/nativewind-utils';
+import { useStyleContext, withStyleContext } from '@gluestack-ui/utils/nativewind-utils';
 import DateTimePickerNative from '@react-native-community/datetimepicker';
 import { styled } from 'nativewind';
 import React, { useCallback, useMemo } from 'react';
-import {
-  Modal,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import {
   dateTimePickerIconStyle,
   dateTimePickerInputStyle,
@@ -70,8 +60,6 @@ const UIDateTimePicker = createDateTimePicker({
   Input: StyledTextInput,
   Icon: StyledUIIcon,
 });
-
-
 
 type IDateTimePickerProps = VariantProps<typeof dateTimePickerStyle> &
   DateTimePickerProps & { className?: string };
@@ -123,13 +111,11 @@ const DateTimePicker = React.forwardRef<
         is24Hour={is24Hour}
         disabled={disabled}
         placeholder={placeholder}
-        format={format}
-      >
+        format={format}>
         <UIDateTimePicker
           className={dateTimePickerStyle({ class: className })}
           ref={ref}
-          {...props}
-        >
+          {...props}>
           {children}
         </UIDateTimePicker>
         {/* iOS spinner picker shown in modal or inline based on display prop */}
@@ -159,13 +145,8 @@ const DateTimePicker = React.forwardRef<
       is24Hour={is24Hour}
       disabled={disabled}
       placeholder={placeholder}
-      format={format}
-    >
-      <UIDateTimePicker
-        className={dateTimePickerStyle({ class: className })}
-        ref={ref}
-        {...props}
-      >
+      format={format}>
+      <UIDateTimePicker className={dateTimePickerStyle({ class: className })} ref={ref} {...props}>
         {children}
       </UIDateTimePicker>
       {/* Native picker is rendered directly on Android */}
@@ -405,27 +386,17 @@ function IOSDateTimePicker({
 
   // Modal mode: show picker in modal with backdrop
   return (
-    <Modal
-      visible={isOpen}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={handleCancel}
-    >
+    <Modal visible={isOpen} transparent={true} animationType="slide" onRequestClose={handleCancel}>
       <View className="flex-1 justify-end">
         {/* Backdrop - separate touchable area */}
-        <Pressable
-          className="absolute inset-0 bg-black/50"
-          onPress={handleCancel}
-        />
+        <Pressable className="absolute inset-0 bg-black/50" onPress={handleCancel} />
         {/* Picker container */}
-        <View className="bg-background rounded-t-lg p-4 relative">
-          <View className="flex-row justify-between items-center mb-4 border-b border-border pb-2">
+        <View className="bg-background relative rounded-t-lg p-4">
+          <View className="border-border mb-4 flex-row items-center justify-between border-b pb-2">
             <Pressable onPress={handleCancel}>
-              <Text className="text-primary font-semibold text-base">
-                Cancel
-              </Text>
+              <Text className="text-primary text-base font-semibold">Cancel</Text>
             </Pressable>
-            <Text className="text-foreground font-semibold text-base">
+            <Text className="text-foreground text-base font-semibold">
               {mode === 'date'
                 ? 'Select Date'
                 : mode === 'time'
@@ -433,7 +404,7 @@ function IOSDateTimePicker({
                   : 'Select Date & Time'}
             </Text>
             <Pressable onPress={handleDone}>
-              <Text className="text-primary font-semibold text-base">Done</Text>
+              <Text className="text-primary text-base font-semibold">Done</Text>
             </Pressable>
           </View>
           <DateTimePickerNative
@@ -452,9 +423,7 @@ function IOSDateTimePicker({
   );
 }
 
-type IDateTimePickerTriggerProps = VariantProps<
-  typeof dateTimePickerTriggerStyle
-> &
+type IDateTimePickerTriggerProps = VariantProps<typeof dateTimePickerTriggerStyle> &
   React.ComponentProps<typeof UIDateTimePicker.Trigger> & {
     className?: string;
   };
@@ -462,10 +431,7 @@ type IDateTimePickerTriggerProps = VariantProps<
 const DateTimePickerTrigger = React.forwardRef<
   React.ComponentRef<typeof UIDateTimePicker.Trigger>,
   IDateTimePickerTriggerProps
->(function DateTimePickerTrigger(
-  { className, size = 'md', variant = 'outline', ...props },
-  ref
-) {
+>(function DateTimePickerTrigger({ className, size = 'md', variant = 'outline', ...props }, ref) {
   const { disabled, setIsOpen } = useDateTimePicker();
 
   return (
@@ -567,6 +533,4 @@ function formatDate(date: Date, format: string): string {
     .replace('ss', pad(date.getSeconds()));
 }
 
-export {
-  DateTimePicker, DateTimePickerIcon, DateTimePickerInput, DateTimePickerTrigger
-};
+export { DateTimePicker, DateTimePickerIcon, DateTimePickerInput, DateTimePickerTrigger };

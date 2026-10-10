@@ -8,10 +8,7 @@ interface UseMessageBlankSizeOptions {
   role: 'user' | 'assistant';
 }
 
-export function useBlankSize({
-  disabled = false,
-  role,
-}: UseMessageBlankSizeOptions) {
+export function useBlankSize({ disabled = false, role }: UseMessageBlankSizeOptions) {
   const context = useBlankContext();
   if (!context) {
     throw new Error('useMessageBlankSize must be used inside Chat');
@@ -30,18 +27,10 @@ export function useBlankSize({
 
     ({ user, assistant, disabled: isDisabled }) => {
       'worklet';
-      console.log(
-        user,
-        assistant,
-        disabled,
-        context.messagesContainerHeight.value
-      );
+      console.log(user, assistant, disabled, context.messagesContainerHeight.value);
 
       const pairedHeight = user;
-      const nextBlank = Math.max(
-        0,
-        context.messagesContainerHeight.value - pairedHeight - 46
-      );
+      const nextBlank = Math.max(0, context.messagesContainerHeight.value - pairedHeight - 46);
       console.log('blank', nextBlank);
       context.blankSize.value = nextBlank;
     }

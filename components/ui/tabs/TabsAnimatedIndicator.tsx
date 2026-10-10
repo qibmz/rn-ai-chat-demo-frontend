@@ -22,10 +22,7 @@ interface TabsAnimatedIndicatorProps {
 }
 const isWeb = Platform.OS === 'web';
 
-export const TabsAnimatedIndicator = React.forwardRef<
-  any,
-  TabsAnimatedIndicatorProps
->(
+export const TabsAnimatedIndicator = React.forwardRef<any, TabsAnimatedIndicatorProps>(
   (
     {
       selectedKey,
@@ -60,9 +57,7 @@ export const TabsAnimatedIndicator = React.forwardRef<
         if (layout && layout.width > 0) {
           // Determine if this is the first time we're setting values
           const isFirstRender = !hasLayout;
-          const duration = isFirstRender
-            ? 0
-            : tabsAnimationConfig.indicatorDuration;
+          const duration = isFirstRender ? 0 : tabsAnimationConfig.indicatorDuration;
 
           // Store the absolute x position (not adjusted for scroll)
           animatedX.value = withDelay(
@@ -107,9 +102,8 @@ export const TabsAnimatedIndicator = React.forwardRef<
         ? animatedScrollOffset.value
         : scrollOffsetShared.value;
 
-      const xPos = orientation === 'horizontal'
-        ? animatedX.value - scrollOffsetValue
-        : animatedX.value;
+      const xPos =
+        orientation === 'horizontal' ? animatedX.value - scrollOffsetValue : animatedX.value;
 
       // Web: react-native-reanimated does not reliably flush the transform
       // array to a CSS transform string, so use left/top instead.

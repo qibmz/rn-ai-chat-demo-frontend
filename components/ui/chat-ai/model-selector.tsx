@@ -24,10 +24,7 @@ const ModelSelectorContext = React.createContext<{
 
 const useModelSelector = () => {
   const ctx = React.useContext(ModelSelectorContext);
-  if (!ctx)
-    throw new Error(
-      'ModelSelector sub-components must be used inside <ModelSelector>'
-    );
+  if (!ctx) throw new Error('ModelSelector sub-components must be used inside <ModelSelector>');
   return ctx;
 };
 
@@ -103,10 +100,9 @@ export const ModelSelectorTrigger = ({
 
   return (
     <Pressable
-      className={`w-[200px] h-[40px] bg-primary justify-between ${className || ''}`}
+      className={`bg-primary h-[40px] w-[200px] justify-between ${className || ''}`}
       onPress={handlePress}
-      {...props}
-    >
+      {...props}>
       {children}
     </Pressable>
   );
@@ -141,32 +137,20 @@ export const ModelSelectorContent = ({
 );
 
 // Rest of the components (unchanged)
-export const ModelSelectorInput = ({
-  className,
-  ...props
-}: ComponentProps<typeof TextInput>) => (
+export const ModelSelectorInput = ({ className, ...props }: ComponentProps<typeof TextInput>) => (
   <TextInput
-    className={`h-12 px-4 border-b border-border text-base text-foreground placeholder:text-muted-foreground ${className || ''}`}
+    className={`border-border text-foreground placeholder:text-muted-foreground h-12 border-b px-4 text-base ${className || ''}`}
     placeholder="Search models..."
     {...props}
   />
 );
 
-export const ModelSelectorList = ({
-  className,
-  ...props
-}: ComponentProps<typeof View>) => (
-  <View className={`flex-1 ${className || ' w-full'}`} {...props} />
+export const ModelSelectorList = ({ className, ...props }: ComponentProps<typeof View>) => (
+  <View className={`flex-1 ${className || 'w-full'}`} {...props} />
 );
 
-export const ModelSelectorEmpty = ({
-  className,
-  ...props
-}: ComponentProps<typeof View>) => (
-  <View
-    className={`flex-1 items-center justify-center py-12 ${className || ''}`}
-    {...props}
-  >
+export const ModelSelectorEmpty = ({ className, ...props }: ComponentProps<typeof View>) => (
+  <View className={`flex-1 items-center justify-center py-12 ${className || ''}`} {...props}>
     <Text className="text-muted-foreground">No models found.</Text>
   </View>
 );
@@ -179,9 +163,7 @@ export const ModelSelectorGroup = ({
 }: ComponentProps<typeof View> & { heading?: string }) => (
   <View className={className} {...props}>
     {heading && (
-      <Text className="px-4 py-2 text-sm font-semibold text-muted-foreground">
-        {heading}
-      </Text>
+      <Text className="text-muted-foreground px-4 py-2 text-sm font-semibold">{heading}</Text>
     )}
     {children}
   </View>
@@ -196,30 +178,24 @@ export const ModelSelectorItem = ({
   console.log(children);
   return (
     <Pressable
-      className={`flex-row items-center  h-4 w-4 px-4 py-3 ${isSelected ? 'bg-accent' : 'active:bg-muted'} ${className || ''}`}
-      {...props}
-    >
+      className={`h-4 w-4 flex-row items-center px-4 py-3 ${isSelected ? 'bg-accent' : 'active:bg-muted'} ${className || ''}`}
+      {...props}>
       {children}
     </Pressable>
   );
 };
 
-export const ModelSelectorShortcut = ({
-  className,
-  ...props
-}: ComponentProps<typeof View>) => (
+export const ModelSelectorShortcut = ({ className, ...props }: ComponentProps<typeof View>) => (
   <View className={`ml-auto ${className || ''}`} {...props} />
 );
 
-export const ModelSelectorSeparator = ({
-  className,
-}: {
-  className?: string;
-}) => <View className={`h-px bg-border mx-4 my-1 ${className || ''}`} />;
+export const ModelSelectorSeparator = ({ className }: { className?: string }) => (
+  <View className={`bg-border mx-4 my-1 h-px ${className || ''}`} />
+);
 
 export const ModelSelectorLogo = ({ provider }: { provider: string }) => (
-  <View className="w-5 h-5 rounded-full bg-muted items-center justify-center">
-    <Text className="text-[10px] text-foreground font-medium text-foreground">
+  <View className="bg-muted h-5 w-5 items-center justify-center rounded-full">
+    <Text className="text-foreground text-foreground text-[10px] font-medium">
       {provider.slice(0, 2).toUpperCase()}
     </Text>
   </View>
@@ -231,9 +207,7 @@ export const ModelSelectorLogoGroup = ({
 }: {
   children: ReactNode;
   className?: string;
-}) => (
-  <View className={`flex-row -space-x-1 ${className || ''}`}>{children}</View>
-);
+}) => <View className={`flex-row -space-x-1 ${className || ''}`}>{children}</View>;
 
 export const ModelSelectorName = ({
   children,
@@ -242,9 +216,7 @@ export const ModelSelectorName = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <Text
-    className={`flex-1 text-left text-base ml-3 text-foreground ${className || ''}`}
-  >
+  <Text className={`text-foreground ml-3 flex-1 text-left text-base ${className || ''}`}>
     {children}
   </Text>
 );

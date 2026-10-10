@@ -24,8 +24,7 @@ export const BlankProvider = ({ children }: { children: ReactNode }) => {
         userMessageHeight,
         assistantMessageHeight,
         messagesContainerHeight,
-      }}
-    >
+      }}>
       {children}
     </BlankContext.Provider>
   );
@@ -33,7 +32,6 @@ export const BlankProvider = ({ children }: { children: ReactNode }) => {
 
 export const useBlankContext = () => {
   const context = useContext(BlankContext);
-  if (!context)
-    throw new Error('useBlankContext must be used inside BlankProvider');
+  if (!context) throw new Error('useBlankContext must be used inside BlankProvider');
   return context;
 };

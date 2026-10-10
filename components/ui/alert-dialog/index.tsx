@@ -1,19 +1,10 @@
 'use client';
 import { createAlertDialog } from '@gluestack-ui/core/alert-dialog/creator';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import {
-  tva,
-  useStyleContext,
-  withStyleContext,
-} from '@gluestack-ui/utils/nativewind-utils';
+import { tva, useStyleContext, withStyleContext } from '@gluestack-ui/utils/nativewind-utils';
 import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import Animated, {
-  Easing,
-  FadeIn,
-  FadeOut,
-  ZoomIn
-} from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
 
 const SCOPE = 'ALERT_DIALOG';
 
@@ -76,9 +67,7 @@ const alertDialogBackdropStyle = tva({
   base: 'absolute left-0 top-0 right-0 bottom-0 bg-black/50 web:cursor-default',
 });
 
-type IAlertDialogProps = React.ComponentPropsWithoutRef<
-  typeof UIAccessibleAlertDialog
-> &
+type IAlertDialogProps = React.ComponentPropsWithoutRef<typeof UIAccessibleAlertDialog> &
   VariantProps<typeof alertDialogStyle>;
 
 type IAlertDialogContentProps = React.ComponentPropsWithoutRef<
@@ -101,9 +90,7 @@ type IAlertDialogFooterProps = React.ComponentPropsWithoutRef<
 > &
   VariantProps<typeof alertDialogFooterStyle>;
 
-type IAlertDialogBodyProps = React.ComponentPropsWithoutRef<
-  typeof UIAccessibleAlertDialog.Body
-> &
+type IAlertDialogBodyProps = React.ComponentPropsWithoutRef<typeof UIAccessibleAlertDialog.Body> &
   VariantProps<typeof alertDialogBodyStyle>;
 
 type IAlertDialogBackdropProps = React.ComponentPropsWithoutRef<
@@ -245,6 +232,5 @@ export {
   AlertDialogCloseButton,
   AlertDialogContent,
   AlertDialogFooter,
-  AlertDialogHeader
+  AlertDialogHeader,
 };
-

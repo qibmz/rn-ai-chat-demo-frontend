@@ -7,7 +7,7 @@ import { Text } from '@/components/ui/text';
 
 export default function ModalScreen() {
   return (
-    <Box className=" flex flex-1 items-center justify-center">
+    <Box className="flex flex-1 items-center justify-center">
       <Text className="text-xl font-bold">Modal</Text>
       <Box className="my-[30px] h-1 w-[80%]" />
       <EditScreenInfo path="app/modal.tsx" />

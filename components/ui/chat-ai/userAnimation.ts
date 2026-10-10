@@ -11,11 +11,7 @@ import { useMessageHeight } from './useMessageHeight';
 import { useBlankContext } from './blank-context';
 import { useWindowDimensions } from 'react-native';
 
-export const useUserMessageAnimation = ({
-  disabled,
-}: {
-  disabled?: boolean;
-}) => {
+export const useUserMessageAnimation = ({ disabled }: { disabled?: boolean }) => {
   const { ref, onLayout, targetHeight } = useMessageHeight();
   const translateY = useSharedValue(0);
   const progress = useSharedValue(-1);
@@ -67,9 +63,7 @@ export const useUserMessageAnimation = ({
     };
   }, [disabled, progress.value, translateY.value]);
 
-  const didUserMessageAnimate = useDerivedValue(() =>
-    disabled ? 1 : progress.get() === 1
-  );
+  const didUserMessageAnimate = useDerivedValue(() => (disabled ? 1 : progress.get() === 1));
 
   return {
     ref: ref,

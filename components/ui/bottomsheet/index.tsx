@@ -71,10 +71,10 @@ type BottomSheetContextValue = {
 
 const BottomSheetContext = createContext<BottomSheetContextValue>({
   bottomSheetRef: { current: null! },
-  handleClose: () => { },
-  handleOpen: () => { },
+  handleClose: () => {},
+  handleOpen: () => {},
   isVisible: false,
-  handleSheetChanges: () => { },
+  handleSheetChanges: () => {},
   currentIndex: -1,
 });
 
@@ -171,9 +171,7 @@ export const BottomSheet = forwardRef<BottomSheetRef, IBottomSheetRootProps>(
     );
 
     return (
-      <BottomSheetContext.Provider value={contextValue}>
-        {children}
-      </BottomSheetContext.Provider>
+      <BottomSheetContext.Provider value={contextValue}>{children}</BottomSheetContext.Provider>
     );
   }
 );
@@ -240,8 +238,7 @@ export const BottomSheetPortal = ({
         backgroundClassName={`${backgroundClassName} bg-background border border-border/90 rounded-xl`}
         // @ts-ignore
         handleIndicatorClassName={`${handleIndicatorClassName} bg-primary`}
-        {...props}
-      >
+        {...props}>
         {props.children}
       </StyledGorhomBottomSheet>
     </Overlay>
@@ -262,8 +259,7 @@ export const BottomSheetTrigger = ({
         onPress?.(e);
         handleOpen(index);
       }}
-      className={bottomSheetTriggerStyle({ className })}
-    >
+      className={bottomSheetTriggerStyle({ className })}>
       {props.children}
     </RNPressable>
   );
@@ -298,9 +294,7 @@ const StyledGorhomBottomSheetHandle = styled(GorhomBottomSheetHandle, {
   className: 'style',
 });
 
-type IBottomSheetHandleProps = React.ComponentProps<
-  typeof GorhomBottomSheetHandle
-> & {
+type IBottomSheetHandleProps = React.ComponentProps<typeof GorhomBottomSheetHandle> & {
   className?: string;
   indicatorClassName?: string;
 };
@@ -315,8 +309,7 @@ export const BottomSheetDragIndicator = ({
     <StyledGorhomBottomSheetHandle
       {...props}
       // @ts-ignore
-      className={bottomSheetHandleStyle({ className })}
-    >
+      className={bottomSheetHandleStyle({ className })}>
       {children}
     </StyledGorhomBottomSheetHandle>
   );
@@ -326,9 +319,7 @@ const StyledGorhomBottomSheetView = styled(GorhomBottomSheetView, {
   className: 'style',
 });
 
-type IBottomSheetContentProps = React.ComponentProps<
-  typeof GorhomBottomSheetView
-> & {
+type IBottomSheetContentProps = React.ComponentProps<typeof GorhomBottomSheetView> & {
   className?: string;
   focusScope?: boolean;
 };
@@ -368,31 +359,23 @@ export const BottomSheetContent = ({
       // @ts-ignore
       {...keyDownHandlers}
       // @ts-ignore
-      className={bottomSheetContentStyle({ className })}
-    >
+      className={bottomSheetContentStyle({ className })}>
       {wrappedContent}
     </StyledGorhomBottomSheetView>
   );
 };
 
-type IBottomSheetFooterProps = React.ComponentProps<
-  typeof GorhomBottomSheetFooter
-> & {
+type IBottomSheetFooterProps = React.ComponentProps<typeof GorhomBottomSheetFooter> & {
   className?: string;
   children?: React.ReactNode;
 };
 
-export const BottomSheetFooter = ({
-  className,
-  children,
-  ...props
-}: IBottomSheetFooterProps) => {
+export const BottomSheetFooter = ({ className, children, ...props }: IBottomSheetFooterProps) => {
   return (
     <GorhomBottomSheetFooter {...props}>
       <View
         // @ts-ignore
-        className={bottomSheetFooterStyle({ className })}
-      >
+        className={bottomSheetFooterStyle({ className })}>
         {children}
       </View>
     </GorhomBottomSheetFooter>
@@ -430,8 +413,7 @@ export const BottomSheetItem = ({
         }
       }}
       role="button"
-      accessibilityRole="button"
-    >
+      accessibilityRole="button">
       {children}
     </Pressable>
   );
@@ -441,23 +423,15 @@ type IBottomSheetItemTextProps = TextProps & {
   className?: string;
 };
 
-export const BottomSheetItemText = ({
-  className,
-  ...props
-}: IBottomSheetItemTextProps) => {
-  return (
-    <Text {...props} className={bottomSheetItemTextStyle({ className })} />
-  );
+export const BottomSheetItemText = ({ className, ...props }: IBottomSheetItemTextProps) => {
+  return <Text {...props} className={bottomSheetItemTextStyle({ className })} />;
 };
 
 const StyledGorhomBottomSheetInput = styled(GorhomBottomSheetInput, {
   className: 'style',
 });
 
-export const BottomSheetTextInput = ({
-  className,
-  ...props
-}: TextInputProps) => {
+export const BottomSheetTextInput = ({ className, ...props }: TextInputProps) => {
   return (
     <StyledGorhomBottomSheetInput
       {...props}

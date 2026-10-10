@@ -11,7 +11,6 @@ import { useKeyboardHandler } from 'react-native-keyboard-controller';
 import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 
 export const useKeyboardAwareChat = () => {
-
   const keyboardHeight = useSharedValue(0);
   const keyboardProgress = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -42,18 +41,16 @@ export const useKeyboardAwareChat = () => {
         },
       ],
     };
-  },[keyboardHeight.value, keyboardProgress.value]);
-
+  }, [keyboardHeight.value, keyboardProgress.value]);
 
   const listContentStyle = useAnimatedStyle(() => {
     return {
       paddingBottom: keyboardOffset.value,
     };
-  },[keyboardOffset.value]);
-
+  }, [keyboardOffset.value]);
 
   const panGesture = useMemo(() => {
-    return Gesture.Pan(); 
+    return Gesture.Pan();
   }, []);
 
   return {

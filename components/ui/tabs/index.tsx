@@ -50,12 +50,10 @@ const tabsTriggerStyle = tva({
 
 const tabsTriggerTextStyle = tva({
   base: 'text-foreground/70 data-[selected=true]:text-foreground font-medium data-[hover=true]:text-foreground/90 ',
- 
 });
 
 const tabsTriggerIconStyle = tva({
   base: 'h-4 w-4 fill-none pointer-events-none shrink-0 text-foreground/70 data-[selected=true]:text-foreground',
-
 });
 
 const tabsContentStyle = tva({
@@ -95,13 +93,11 @@ const UITabs = createTabs({
   Indicator: View,
 });
 
-
 /** Type definitions */
 
 type ITabsProps = React.ComponentPropsWithoutRef<typeof UITabs> &
   VariantProps<typeof tabsStyle> & {
     variant?: 'underlined' | 'filled';
-   
   };
 
 type ITabsListProps = React.ComponentPropsWithoutRef<typeof UITabs.List>;
@@ -110,23 +106,15 @@ type ITabsTriggerProps = React.ComponentPropsWithoutRef<typeof UITabs.Trigger>;
 
 type ITabsContentProps = React.ComponentPropsWithoutRef<typeof UITabs.Content>;
 
-type ITabsContentWrapperProps = React.ComponentPropsWithoutRef<
-  typeof UITabs.ContentWrapper
->;
+type ITabsContentWrapperProps = React.ComponentPropsWithoutRef<typeof UITabs.ContentWrapper>;
 
-type ITabsTriggerTextProps = React.ComponentPropsWithoutRef<
-  typeof UITabs.TriggerText
->;
+type ITabsTriggerTextProps = React.ComponentPropsWithoutRef<typeof UITabs.TriggerText>;
 
-type ITabsTriggerIconProps = React.ComponentPropsWithoutRef<
-  typeof UITabs.TriggerIcon
-> & {
+type ITabsTriggerIconProps = React.ComponentPropsWithoutRef<typeof UITabs.TriggerIcon> & {
   as?: React.ElementType;
 };
 
-type ITabsIndicatorProps = React.ComponentPropsWithoutRef<
-  typeof UITabs.Indicator
->;
+type ITabsIndicatorProps = React.ComponentPropsWithoutRef<typeof UITabs.Indicator>;
 
 /** Components */
 
@@ -138,194 +126,172 @@ const Tabs = React.forwardRef<React.ComponentRef<typeof UITabs>, ITabsProps>(
         {...props}
         className={tabsStyle({ class: className })}
         // @ts-ignore - pass variants to context
-        context={{ variant}}
+        context={{ variant }}
       />
     );
   }
 );
 
-const TabsList = React.forwardRef<
-  React.ComponentRef<typeof UITabs.List>,
-  ITabsListProps
->(({ className, children, ...props }, ref) => {
-  const context = React.useContext(TabsContext);
+const TabsList = React.forwardRef<React.ComponentRef<typeof UITabs.List>, ITabsListProps>(
+  ({ className, children, ...props }, ref) => {
+    const context = React.useContext(TabsContext);
 
-  const flatListRef = useRef<any>(null);
+    const flatListRef = useRef<any>(null);
 
-  if (!context) return null;
+    if (!context) return null;
 
-  const { orientation, setScrollOffset, selectedKey, listRef } = context;
+    const { orientation, setScrollOffset, selectedKey, listRef } = context;
 
-  // Shared value for indicator sync
-  const animatedScrollOffset = useSharedValue(0);
+    // Shared value for indicator sync
+    const animatedScrollOffset = useSharedValue(0);
 
-  /**
-   * Expose shared value to context
-   */
-  useEffect(() => {
-    if (context) {
-      // @ts-ignore
-      context.animatedScrollOffset = animatedScrollOffset;
-    }
-  }, [context, animatedScrollOffset]);
+    /**
+     * Expose shared value to context
+     */
+    useEffect(() => {
+      if (context) {
+        // @ts-ignore
+        context.animatedScrollOffset = animatedScrollOffset;
+      }
+    }, [context, animatedScrollOffset]);
 
-  /**
-   * Auto scroll to selected tab
-   */
-  useEffect(() => {
-    if (orientation !== 'horizontal' || !selectedKey) return;
+    /**
+     * Auto scroll to selected tab
+     */
+    useEffect(() => {
+      if (orientation !== 'horizontal' || !selectedKey) return;
 
-    const childArray = React.Children.toArray(children);
-    const triggers = childArray.filter(
-      (child: any) => child?.type?.displayName !== 'TabsIndicator'
-    );
-
-    const selectedIndex = triggers.findIndex(
-      (child: any) => child?.props?.value === selectedKey
-    );
-
-    if (selectedIndex >= 0 && flatListRef.current) {
-      const timer = setTimeout(() => {
-        try {
-          flatListRef.current.scrollToIndex({
-            index: selectedIndex,
-            animated: true,
-            viewPosition: 0.5,
-          });
-        } catch {}
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [selectedKey, orientation, children]);
-
-  /**
-   * Native animated scroll handler (ONLY for iOS / Android)
-   */
-  const nativeScrollHandler =
-    Platform.OS === 'web'
-      ? undefined
-      : useAnimatedScrollHandler({
-          onScroll: (event) => {
-            'worklet';
-            const x = event.contentOffset.x;
-            animatedScrollOffset.value = x;
-            runOnJS(setScrollOffset)(x);
-          },
-        });
-
-  /**
-   * Web scroll handler (JS thread)
-   */
-  const handleWebScroll = (e: any) => {
-    const x = e.nativeEvent.contentOffset.x;
-    animatedScrollOffset.value = x;
-    setScrollOffset(x);
-  };
-
-  /**
-   * Horizontal tabs → FlatList
-   */
-  // Memoize the split so FlatList's `data` prop stays referentially stable
-  // across scroll-driven re-renders (scrollOffset in context ticks on every
-  // scroll event; without this, FlatList re-renders every cell every frame,
-  // firing onLayout → measureTrigger on every scroll tick).
-  const { triggers, indicator } = useMemo(() => {
-    const childArray = React.Children.toArray(children);
-    return {
-      triggers: childArray.filter(
+      const childArray = React.Children.toArray(children);
+      const triggers = childArray.filter(
         (child: any) => child?.type?.displayName !== 'TabsIndicator'
-      ),
-      indicator: childArray.find(
-        (child: any) => child?.type?.displayName === 'TabsIndicator'
-      ),
+      );
+
+      const selectedIndex = triggers.findIndex((child: any) => child?.props?.value === selectedKey);
+
+      if (selectedIndex >= 0 && flatListRef.current) {
+        const timer = setTimeout(() => {
+          try {
+            flatListRef.current.scrollToIndex({
+              index: selectedIndex,
+              animated: true,
+              viewPosition: 0.5,
+            });
+          } catch {}
+        }, 100);
+
+        return () => clearTimeout(timer);
+      }
+    }, [selectedKey, orientation, children]);
+
+    /**
+     * Native animated scroll handler (ONLY for iOS / Android)
+     */
+    const nativeScrollHandler =
+      Platform.OS === 'web'
+        ? undefined
+        : useAnimatedScrollHandler({
+            onScroll: (event) => {
+              'worklet';
+              const x = event.contentOffset.x;
+              animatedScrollOffset.value = x;
+              runOnJS(setScrollOffset)(x);
+            },
+          });
+
+    /**
+     * Web scroll handler (JS thread)
+     */
+    const handleWebScroll = (e: any) => {
+      const x = e.nativeEvent.contentOffset.x;
+      animatedScrollOffset.value = x;
+      setScrollOffset(x);
     };
-  }, [children]);
 
-  if (orientation === 'horizontal') {
+    /**
+     * Horizontal tabs → FlatList
+     */
+    // Memoize the split so FlatList's `data` prop stays referentially stable
+    // across scroll-driven re-renders (scrollOffset in context ticks on every
+    // scroll event; without this, FlatList re-renders every cell every frame,
+    // firing onLayout → measureTrigger on every scroll tick).
+    const { triggers, indicator } = useMemo(() => {
+      const childArray = React.Children.toArray(children);
+      return {
+        triggers: childArray.filter((child: any) => child?.type?.displayName !== 'TabsIndicator'),
+        indicator: childArray.find((child: any) => child?.type?.displayName === 'TabsIndicator'),
+      };
+    }, [children]);
+
+    if (orientation === 'horizontal') {
+      return (
+        <View ref={listRef} className={tabsListStyle({ orientation, class: className })}>
+          {indicator}
+
+          <AnimatedFlatList
+            ref={flatListRef}
+            horizontal
+            data={triggers}
+            renderItem={({ item }) => item as any}
+            keyExtractor={(item: any, index) => item?.props?.value ?? `tab-${index}`}
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+            style={{ zIndex: 100 }}
+            onScroll={Platform.OS === 'web' ? handleWebScroll : nativeScrollHandler}
+            onScrollToIndexFailed={(info) => {
+              setTimeout(() => {
+                try {
+                  flatListRef.current?.scrollToIndex({
+                    index: info.index,
+                    animated: false,
+                    viewPosition: 0.5,
+                  });
+                } catch {}
+              }, 500);
+            }}
+            {...props}
+          />
+        </View>
+      );
+    }
+
+    /**
+     * Vertical tabs → default List
+     */
     return (
-      <View
-        ref={listRef}
-        className={tabsListStyle({ orientation, class: className })}
-      >
-        {indicator}
-
-        <AnimatedFlatList
-          ref={flatListRef}
-          horizontal
-          data={triggers}
-          renderItem={({ item }) => item as any}
-          keyExtractor={(item: any, index) =>
-            item?.props?.value ?? `tab-${index}`
-          }
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          style={{ zIndex: 100 }}
-          onScroll={
-            Platform.OS === 'web' ? handleWebScroll : nativeScrollHandler
-          }
-          onScrollToIndexFailed={(info) => {
-            setTimeout(() => {
-              try {
-                flatListRef.current?.scrollToIndex({
-                  index: info.index,
-                  animated: false,
-                  viewPosition: 0.5,
-                });
-              } catch {}
-            }, 500);
-          }}
-          {...props}
-        />
-      </View>
+      <UITabs.List
+        ref={ref}
+        {...props}
+        className={tabsListStyle({ orientation, class: className })}>
+        {children}
+      </UITabs.List>
     );
   }
+);
 
-  /**
-   * Vertical tabs → default List
-   */
-  return (
-    <UITabs.List
-      ref={ref}
-      {...props}
-      className={tabsListStyle({ orientation, class: className })}
-    >
-      {children}
-    </UITabs.List>
-  );
-});
+const TabsTrigger = React.forwardRef<React.ComponentRef<typeof UITabs.Trigger>, ITabsTriggerProps>(
+  ({ className, ...props }, ref) => {
+    const { variant } = useStyleContext(SCOPE);
 
+    return (
+      <UITabs.Trigger
+        ref={ref}
+        {...props}
+        className={tabsTriggerStyle({
+          parentVariants: { variant },
+          class: className,
+        })}
+      />
+    );
+  }
+);
 
-const TabsTrigger = React.forwardRef<
-  React.ComponentRef<typeof UITabs.Trigger>,
-  ITabsTriggerProps
->(({ className, ...props }, ref) => {
-  const { variant } = useStyleContext(SCOPE);
-
-  return (
-    <UITabs.Trigger
-      ref={ref}
-      {...props}
-      className={tabsTriggerStyle({
-        parentVariants: { variant  },
-        class: className,
-      })}
-    />
-  );
-});
-
-const TabsContent = React.forwardRef<
-  React.ComponentRef<typeof UITabs.Content>,
-  ITabsContentProps
->(({ className, ...props }, ref) => {
-  return (
-    <UITabs.Content
-      ref={ref}
-      {...props}
-      className={tabsContentStyle({ class: className })}
-    />
-  );
-});
+const TabsContent = React.forwardRef<React.ComponentRef<typeof UITabs.Content>, ITabsContentProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <UITabs.Content ref={ref} {...props} className={tabsContentStyle({ class: className })} />
+    );
+  }
+);
 
 const TabsContentWrapper = React.forwardRef<
   React.ComponentRef<typeof UITabs.ContentWrapper>,
@@ -352,7 +318,7 @@ const TabsContentWrapper = React.forwardRef<
         isFirstRender.current = false;
       } else {
         // Animate height changes
-        heightValue.value = withSpring(height,{duration:100});
+        heightValue.value = withSpring(height, { duration: 100 });
       }
     }
   }, [height, heightValue]);
@@ -378,14 +344,11 @@ const TabsTriggerText = React.forwardRef<
   React.ComponentRef<typeof UITabs.TriggerText>,
   ITabsTriggerTextProps
 >(({ className, ...props }, ref) => {
-  
-
   return (
     <UITabs.TriggerText
       ref={ref}
       {...props}
       className={tabsTriggerTextStyle({
-       
         class: className,
       })}
     />
@@ -418,7 +381,6 @@ const TabsTriggerIcon = React.forwardRef<
     />
   );
 });
-
 
 const TabsIndicator = React.forwardRef<
   React.ComponentRef<typeof UITabs.Indicator>,
@@ -453,7 +415,6 @@ const TabsIndicator = React.forwardRef<
   );
 });
 
-
 Tabs.displayName = 'Tabs';
 TabsList.displayName = 'TabsList';
 TabsTrigger.displayName = 'TabsTrigger';
@@ -461,7 +422,7 @@ TabsContent.displayName = 'TabsContent';
 TabsContentWrapper.displayName = 'TabsContentWrapper';
 TabsTriggerText.displayName = 'TabsTriggerText';
 TabsTriggerIcon.displayName = 'TabsTriggerIcon';
-TabsIndicator.displayName = 'TabsIndicator'
+TabsIndicator.displayName = 'TabsIndicator';
 
 export {
   Tabs,

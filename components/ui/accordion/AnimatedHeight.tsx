@@ -1,10 +1,6 @@
 import React from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 interface AnimatedHeightProps {
   isExpanded: boolean;
@@ -45,10 +41,7 @@ export const AnimatedHeight: React.FC<AnimatedHeightProps> = ({
 
   return (
     <Animated.View style={[animatedStyle, style]}>
-      <Animated.View
-        onLayout={onLayout}
-        style={{ position: 'absolute', width: '100%' }}
-      >
+      <Animated.View onLayout={onLayout} style={{ position: 'absolute', width: '100%' }}>
         {children}
       </Animated.View>
     </Animated.View>

@@ -35,7 +35,5 @@ export const AnimatedIcon: React.FC<AnimatedIconProps> = ({
     };
   }, [rotation, animatedValue]);
 
-  return (
-    <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>
-  );
+  return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
 };

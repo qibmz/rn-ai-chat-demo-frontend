@@ -1,13 +1,9 @@
 import { useCallback } from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
-import {
-  useAnimatedRef,
-  useSharedValue,
-  type SharedValue,
-} from 'react-native-reanimated';
+import { useAnimatedRef, useSharedValue, type SharedValue } from 'react-native-reanimated';
 
 interface UseMessageRenderedHeightProps {
-  targetHeight?: SharedValue<number>; 
+  targetHeight?: SharedValue<number>;
 }
 
 export function useMessageHeight(targetHeight?: SharedValue<number>) {
@@ -27,6 +23,6 @@ export function useMessageHeight(targetHeight?: SharedValue<number>) {
   return {
     ref,
     onLayout,
-    targetHeight: heightToUse, 
+    targetHeight: heightToUse,
   };
 }

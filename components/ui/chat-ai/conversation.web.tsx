@@ -1,9 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  type ReactElement,
-} from 'react';
+import React, { useRef, useCallback, useEffect, type ReactElement } from 'react';
 import { useKeyboardAwareChat } from './useKeyboardAwareChat';
 import {
   View,
@@ -24,9 +19,7 @@ export type ConversationProps = React.PropsWithChildren<{ className?: string }>;
 
 export const Conversation = ({ children, className }: ConversationProps) => (
   <BlankProvider>
-    <View className={`flex-1 bg-background ${className || ''}`}>
-      {children}
-    </View>
+    <View className={`bg-background flex-1 ${className || ''}`}>{children}</View>
   </BlankProvider>
 );
 
@@ -43,14 +36,10 @@ export const ConversationEmptyState = ({
   icon,
   className,
 }: ConversationEmptyStateProps) => (
-  <View
-    className={`flex-1 items-center justify-center px-10 py-12 ${className || ''}`}
-  >
+  <View className={`flex-1 items-center justify-center px-10 py-12 ${className || ''}`}>
     {icon ?? <MessageSquare size={48} className="text-muted-foreground" />}
-    <Text className="mt-4 text-xl font-semibold text-foreground">{title}</Text>
-    <Text className="mt-2 text-center text-base text-muted-foreground">
-      {description}
-    </Text>
+    <Text className="text-foreground mt-4 text-xl font-semibold">{title}</Text>
+    <Text className="text-muted-foreground mt-2 text-center text-base">{description}</Text>
   </View>
 );
 
@@ -89,8 +78,7 @@ export const ConversationContent = ({
 
   useEffect(() => {
     const shouldScroll =
-      messages.length > prevLengthRef.current &&
-      messages[messages.length - 1].role === 'user';
+      messages.length > prevLengthRef.current && messages[messages.length - 1].role === 'user';
 
     if (shouldScroll) {
       flatListRef.current?.scrollToEnd?.();
@@ -106,8 +94,7 @@ export const ConversationContent = ({
       onLayout={(e) => {
         const height = e.nativeEvent.layout.height;
         messagesContainerHeight.value = height;
-      }}
-    >
+      }}>
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -117,9 +104,7 @@ export const ConversationContent = ({
         className="flex-1"
         contentContainerClassName="px-4 py-6 gap-6"
         scrollEventThrottle={16}
-        ListEmptyComponent={
-          messages.length === 0 ? <ConversationEmptyState /> : undefined
-        }
+        ListEmptyComponent={messages.length === 0 ? <ConversationEmptyState /> : undefined}
         contentContainerStyle={{
           paddingBottom: blankSize.value,
         }}
@@ -132,17 +117,14 @@ export const ConversationContent = ({
 export const ConversationScrollButton = () => (
   <TouchableOpacity
     onPress={() => {}}
-    className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-primary h-11 w-11 items-center justify-center rounded-full shadow-lg"
-  >
+    className="bg-primary absolute bottom-6 left-1/2 h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full shadow-lg">
     <ArrowDown size={22} className="text-primary-foreground" />
   </TouchableOpacity>
 );
 
 export type ConversationDownloadProps = { messages: UIMessage[] };
 
-export const ConversationDownload = ({
-  messages,
-}: ConversationDownloadProps) => {
+export const ConversationDownload = ({ messages }: ConversationDownloadProps) => {
   const handleDownload = useCallback(() => {
     const markdown = messages
       .map((msg) => {
@@ -160,8 +142,7 @@ export const ConversationDownload = ({
   return (
     <TouchableOpacity
       onPress={handleDownload}
-      className="absolute top-4 right-4 bg-card p-3 rounded-2xl shadow-sm"
-    >
+      className="bg-card absolute top-4 right-4 rounded-2xl p-3 shadow-sm">
       <Download size={20} className="text-muted-foreground" />
     </TouchableOpacity>
   );
