@@ -99,6 +99,26 @@ pnpm typecheck
 - [ ] 合并后需确认的事项
 ```
 
+## Tailwind / NativeWind 样式
+
+- **优先用 spacing scale，禁止业务代码里写任意 `px` 值**（如 `max-w-[400px]`、`h-[48px]`）
+- 默认 spacing 单位为 `0.25rem`（4px）：`N → N × 4px`，例如：
+  - `max-w-[400px]` → `max-w-100`
+  - `max-w-[280px]` → `max-w-70`
+  - `h-[48px]` → `h-12`
+- 只有 scale 表达不了、或第三方 / `components/ui` 生成代码才允许 `-[…px]`；**新写业务 UI 必须用 scale**
+- 工具提示「The class `max-w-[400px]` can be written as `max-w-100`」时，按提示改掉，不要保留任意值
+
+## API 请求约定（对齐后端）
+
+后端统一响应：`{ code, message, data | errors, timestamp, path }`；成功 `code === 200`，失败 `code` 为 HTTP 状态码。
+
+- 封装见 `lib/api/client.ts`：成功取 `data`；失败抛 `ApiError`（含 `code` / `message` / `errors`）
+- **401**（未登录 / access 过期）：自动用 refresh token 刷新一次并重试原请求；刷新失败则 `clearSession` 回到未登录
+- 登录失败也是 401（邮箱或密码错误）——`login` / `register` / `refresh` / `logout` 必须 `skipAuth: true`，**不要**对它们做 refresh
+- 受保护接口不要手传 `Authorization`，由 client 从 Auth 会话自动带上
+- 用户可见错误文案用后端返回的中文 `message`
+
 ## 代码习惯
 
 - 用户可见文案优先中文
