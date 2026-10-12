@@ -149,7 +149,7 @@ export function ProfileScreen() {
         </ScreenContainer>
       </ScrollView>
 
-      <FrostedHeader onBack={() => router.back()} backVariant="close" />
+      <FrostedHeader fallbackHref="/home" backVariant="close" />
 
       <LogoutConfirmDialog
         isOpen={logoutOpen}

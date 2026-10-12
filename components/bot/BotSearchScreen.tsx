@@ -11,6 +11,7 @@ import { GlassView } from '@/components/ui/liquid-glass';
 import { chatPath } from '@/lib/bot/bots';
 import { MOCK_CONVERSATIONS } from '@/lib/bot/mockConversations';
 import { SEARCH_FILTERS, type SearchFilterId } from '@/lib/bot/types';
+import { goBackOr } from '@/lib/navigation/goBack';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -78,7 +79,7 @@ export function BotSearchScreen() {
                 <CircleIconButton
                   icon={CloseIcon}
                   accessibilityLabel="关闭搜索"
-                  onPress={() => router.back()}
+                  onPress={() => goBackOr('/home')}
                 />
                 <Input className="bg-muted h-10 flex-1 rounded-full border-0 px-3">
                   <InputSlot className="pl-1">

@@ -10,7 +10,6 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { THEME_PREFERENCE_OPTIONS, type ThemePreference } from '@/lib/theme/types';
-import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -97,7 +96,7 @@ export function AppearanceScreen() {
       </ScrollView>
 
       <FrostedHeader
-        onBack={() => router.back()}
+        fallbackHref="/profile"
         backVariant="back"
         title="外观"
         accessibilityLabel="返回"

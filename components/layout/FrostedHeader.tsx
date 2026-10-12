@@ -4,7 +4,9 @@ import { Heading } from '@/components/ui/heading';
 import { ArrowLeftIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import { GlassView } from '@/components/ui/liquid-glass';
 import { Pressable } from '@/components/ui/pressable';
+import { goBackOr } from '@/lib/navigation/goBack';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
+import type { Href } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,7 +15,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const FROSTED_HEADER_BAR_HEIGHT = 56;
 
 type FrostedHeaderProps = {
-  onBack: () => void;
+  /** 自定义返回；默认 goBackOr(fallbackHref) */
+  onBack?: () => void;
+  /** 无历史栈时的去向 */
+  fallbackHref?: Href;
   /** close：圆形 X（设置页）；back：返回箭头 */
   backVariant?: 'close' | 'back';
   title?: string;
@@ -26,6 +31,7 @@ type FrostedHeaderProps = {
  */
 export function FrostedHeader({
   onBack,
+  fallbackHref = '/home',
   backVariant = 'close',
   title,
   accessibilityLabel,
@@ -33,6 +39,14 @@ export function FrostedHeader({
   const insets = useSafeAreaInsets();
   const { resolved } = useThemePreference();
   const label = accessibilityLabel ?? (backVariant === 'close' ? '关闭' : '返回');
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
+    goBackOr(fallbackHref);
+  };
 
   return (
     <Box
@@ -46,7 +60,7 @@ export function FrostedHeader({
         <Box className="border-border/25 bg-background/30 h-14 w-full justify-center border-b px-2">
           <ScreenContainer variant="settings" className="flex-row items-center px-1">
             <Pressable
-              onPress={onBack}
+              onPress={handleBack}
               hitSlop={8}
               accessibilityRole="button"
               accessibilityLabel={label}

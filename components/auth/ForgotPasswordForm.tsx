@@ -1,5 +1,5 @@
+import { AuthField } from '@/components/auth/AuthField';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
-import { Input, InputField } from '@/components/ui/input';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
@@ -98,55 +98,42 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
           </VStack>
 
           <VStack className="gap-3">
-            <Input
-              className="border-border bg-muted h-12 rounded-2xl px-4"
-              isDisabled={step === 'reset'}>
-              <InputField
-                value={email}
-                onChangeText={setEmail}
-                placeholder="邮箱"
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                editable={step === 'request'}
-                className="text-foreground text-base"
-              />
-            </Input>
+            <AuthField
+              rootProps={{ isDisabled: step === 'reset' }}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="邮箱"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              editable={step === 'request'}
+            />
 
             {step === 'reset' ? (
               <>
-                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
-                  <InputField
-                    value={code}
-                    onChangeText={setCode}
-                    placeholder="8 位验证码"
-                    keyboardType="number-pad"
-                    maxLength={8}
-                    textContentType="oneTimeCode"
-                    className="text-foreground text-base"
-                  />
-                </Input>
-                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
-                  <InputField
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                    placeholder="新密码（至少 8 位）"
-                    secureTextEntry
-                    textContentType="newPassword"
-                    className="text-foreground text-base"
-                  />
-                </Input>
-                <Input className="border-border bg-muted h-12 rounded-2xl px-4">
-                  <InputField
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    placeholder="确认新密码"
-                    secureTextEntry
-                    textContentType="newPassword"
-                    className="text-foreground text-base"
-                  />
-                </Input>
+                <AuthField
+                  value={code}
+                  onChangeText={setCode}
+                  placeholder="8 位验证码"
+                  keyboardType="number-pad"
+                  maxLength={8}
+                  textContentType="oneTimeCode"
+                />
+                <AuthField
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  placeholder="新密码（至少 8 位）"
+                  secureTextEntry
+                  textContentType="newPassword"
+                />
+                <AuthField
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="确认新密码"
+                  secureTextEntry
+                  textContentType="newPassword"
+                />
               </>
             ) : null}
           </VStack>

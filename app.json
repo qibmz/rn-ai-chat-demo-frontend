@@ -8,13 +8,16 @@
     "scheme": "niuma",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.qbmzzz.niuma",
       "buildNumber": "1",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
+      "package": "com.qbmzzz.niuma",
       "versionCode": 1,
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -37,6 +40,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8b82fd61-4db5-45a2-b88b-746b61e70247"
+      }
+    },
+    "owner": "qbmzzz"
   }
 }

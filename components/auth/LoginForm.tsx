@@ -1,6 +1,6 @@
+import { AuthField } from '@/components/auth/AuthField';
 import { AuthModeSwitch, type AuthMode } from '@/components/auth/AuthModeSwitch';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
-import { Input, InputField } from '@/components/ui/input';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
@@ -10,6 +10,7 @@ import { useAppToast } from '@/lib/hooks/useAppToast';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { getPrimarySpinnerColor } from '@/lib/theme/spinnerColor';
 import { isValidEmail, isValidPassword } from '@/lib/utils/validation';
+import { goBackOr } from '@/lib/navigation/goBack';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 
@@ -21,8 +22,9 @@ export function LoginForm({ onModeChange }: LoginFormProps) {
   const { login } = useAuth();
   const toast = useAppToast();
   const { preference, resolved } = useThemePreference();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // 默认回填后端 seed，方便本地 / 演示联调
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('password123');
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async () => {
@@ -61,28 +63,22 @@ export function LoginForm({ onModeChange }: LoginFormProps) {
           <AuthModeSwitch mode="login" onChange={onModeChange} />
 
           <VStack className="gap-3">
-            <Input className="border-border bg-muted h-12 rounded-2xl px-4">
-              <InputField
-                value={email}
-                onChangeText={setEmail}
-                placeholder="邮箱"
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                className="text-foreground text-base"
-              />
-            </Input>
-            <Input className="border-border bg-muted h-12 rounded-2xl px-4">
-              <InputField
-                value={password}
-                onChangeText={setPassword}
-                placeholder="密码（至少 8 位）"
-                secureTextEntry
-                textContentType="password"
-                className="text-foreground text-base"
-              />
-            </Input>
+            <AuthField
+              value={email}
+              onChangeText={setEmail}
+              placeholder="邮箱"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+            />
+            <AuthField
+              value={password}
+              onChangeText={setPassword}
+              placeholder="密码（至少 8 位）"
+              secureTextEntry
+              textContentType="password"
+            />
             <Pressable
               onPress={() =>
                 router.push({
@@ -108,7 +104,7 @@ export function LoginForm({ onModeChange }: LoginFormProps) {
           ) : null}
           <ButtonText className="text-primary-foreground text-base font-semibold">登录</ButtonText>
         </Button>
-        <Pressable onPress={() => router.back()} className="items-center py-2">
+        <Pressable onPress={() => goBackOr('/welcome')} className="items-center py-2">
           <Text className="text-muted-foreground text-sm">返回</Text>
         </Pressable>
         <Text className="text-muted-foreground px-2 text-center text-xs leading-5">

@@ -4,7 +4,6 @@ import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withRepeat,
   withSequence,
   withTiming,
@@ -31,27 +30,7 @@ const BLOBS: BlobSpec[] = [
   { color: '#F59E0B', angle: 230, radius: 1.04, size: 50, shape: 'cloud', eyes: 'dots' },
 ];
 
-function BlobFace({ color, size, shape, eyes, index }: BlobSpec & { index: number }) {
-  const float = useSharedValue(0);
-
-  useEffect(() => {
-    float.value = withDelay(
-      index * 120,
-      withRepeat(
-        withSequence(
-          withTiming(-6, { duration: 1600, easing: Easing.inOut(Easing.sin) }),
-          withTiming(6, { duration: 1600, easing: Easing.inOut(Easing.sin) })
-        ),
-        -1,
-        true
-      )
-    );
-  }, [float, index]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: float.value }],
-  }));
-
+function BlobFace({ color, size, shape, eyes }: BlobSpec) {
   const radius =
     shape === 'circle'
       ? size / 2
@@ -62,20 +41,17 @@ function BlobFace({ color, size, shape, eyes, index }: BlobSpec & { index: numbe
           : size * 0.4;
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: size,
-          height: size,
-          borderRadius: radius,
-          backgroundColor: color,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          gap: size * 0.12,
-        },
-        animatedStyle,
-      ]}>
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: radius,
+        backgroundColor: color,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        gap: size * 0.12,
+      }}>
       {eyes === 'dots' ? (
         <>
           <View
@@ -117,7 +93,7 @@ function BlobFace({ color, size, shape, eyes, index }: BlobSpec & { index: numbe
           />
         </>
       )}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -125,13 +101,36 @@ type BlobOrbitProps = {
   compact?: boolean;
 };
 
+/**
+ * 登录装饰：矢量小球定位 + 整组一路轻浮（避免原先 9 路 Reanimated 掉帧）。
+ */
 export function BlobOrbit({ compact = false }: BlobOrbitProps) {
   const orbit = compact ? 118 : 148;
   const box = orbit * 2 + 64;
+  const floatY = useSharedValue(0);
+
+  useEffect(() => {
+    floatY.value = withRepeat(
+      withSequence(
+        withTiming(-5, { duration: 2200, easing: Easing.inOut(Easing.sin) }),
+        withTiming(5, { duration: 2200, easing: Easing.inOut(Easing.sin) })
+      ),
+      -1,
+      true
+    );
+  }, [floatY]);
+
+  const groupStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: floatY.value }],
+  }));
 
   return (
-    <View style={{ width: box, height: box, alignItems: 'center', justifyContent: 'center' }}>
-      {BLOBS.map((blob, index) => {
+    <Animated.View
+      style={[
+        { width: box, height: box, alignItems: 'center', justifyContent: 'center' },
+        groupStyle,
+      ]}>
+      {BLOBS.map((blob) => {
         const rad = ((blob.angle - 90) * Math.PI) / 180;
         const r = orbit * blob.radius * (compact ? 0.82 : 1);
         const x = Math.cos(rad) * r;
@@ -145,10 +144,10 @@ export function BlobOrbit({ compact = false }: BlobOrbitProps) {
               left: box / 2 + x - size / 2,
               top: box / 2 + y - size / 2,
             }}>
-            <BlobFace {...blob} size={size} index={index} />
+            <BlobFace {...blob} size={size} />
           </View>
         );
       })}
-    </View>
+    </Animated.View>
   );
 }

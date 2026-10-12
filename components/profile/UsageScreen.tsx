@@ -6,7 +6,6 @@ import { Progress, ProgressFilledTrack } from '@/components/ui/progress';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { getWeeklyUsage } from '@/lib/usage/mockUsage';
-import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -54,7 +53,7 @@ export function UsageScreen() {
         </ScreenContainer>
       </ScrollView>
 
-      <FrostedHeader onBack={() => router.back()} title="用量" />
+      <FrostedHeader fallbackHref="/profile" backVariant="back" title="用量" />
     </Box>
   );
 }

@@ -15,8 +15,11 @@ export function GluestackUIProvider({
   style?: ViewProps['style'];
 }) {
   useEffect(() => {
-    // system → null，交给系统 Appearance；light / dark 强制覆盖
-    Appearance.setColorScheme(mode === 'system' ? null : (mode as ColorSchemeName));
+    // RN 新版 AppearanceModule.setColorScheme 的 style 为非空；
+    // system 须用 'unspecified'，传 null 会在 Android 上 NPE 闪退
+    Appearance.setColorScheme(
+      mode === 'system' ? ('unspecified' as ColorSchemeName) : (mode as ColorSchemeName)
+    );
   }, [mode]);
 
   return (

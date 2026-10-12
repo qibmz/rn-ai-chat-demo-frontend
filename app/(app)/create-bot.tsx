@@ -7,7 +7,7 @@ import { Input, InputField } from '@/components/ui/input';
 import { Pressable } from '@/components/ui/pressable';
 import { VStack } from '@/components/ui/vstack';
 import { useAppToast } from '@/lib/hooks/useAppToast';
-import { router } from 'expo-router';
+import { goBackOr } from '@/lib/navigation/goBack';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -103,7 +103,7 @@ export default function CreateBotScreen() {
                 return;
               }
               show({ title: '创建成功（演示）', description: name.trim(), action: 'success' });
-              router.back();
+              goBackOr('/home');
             }}>
             <ButtonText>创建</ButtonText>
           </Button>
@@ -111,7 +111,7 @@ export default function CreateBotScreen() {
       </Box>
 
       <FrostedHeader
-        onBack={() => router.back()}
+        fallbackHref="/home"
         backVariant="close"
         title="创建新 Bot"
         accessibilityLabel="关闭"

@@ -1,6 +1,7 @@
 import { AuthShell } from '@/components/auth/AuthShell';
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
-import { router, useLocalSearchParams } from 'expo-router';
+import { goBackOr } from '@/lib/navigation/goBack';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
 export default function ForgotPasswordScreen() {
@@ -10,7 +11,7 @@ export default function ForgotPasswordScreen() {
     <AuthShell compactLogo>
       <ForgotPasswordForm
         initialEmail={typeof email === 'string' ? email : ''}
-        onBackToLogin={() => router.back()}
+        onBackToLogin={() => goBackOr('/login')}
       />
     </AuthShell>
   );
