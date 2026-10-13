@@ -7,3 +7,6 @@ coverage
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+# gluestack 生成 UI：不参与 format / lint / typecheck
+components/ui/**
+types/ui-shim/**

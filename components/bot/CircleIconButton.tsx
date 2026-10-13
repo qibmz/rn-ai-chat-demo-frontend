@@ -3,7 +3,7 @@ import { Icon } from '@/components/ui/icon';
 import { Pressable } from '@/components/ui/pressable';
 import React from 'react';
 import type { ComponentProps } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
 type IconComponent = ComponentProps<typeof Icon>['as'];
 
@@ -31,14 +31,11 @@ export function CircleIconButton({
       accessibilityLabel={accessibilityLabel}
       hitSlop={6}
       className={`bg-card items-center justify-center rounded-full data-[active=true]:opacity-85 data-[hover=true]:opacity-90 ${className ?? ''}`}
-      style={[
-        styles.shadow,
-        {
-          width: size,
-          height: size,
-        },
-        style,
-      ]}
+      style={(state: { pressed?: boolean }) => {
+        const resolved: StyleProp<ViewStyle> =
+          typeof style === 'function' ? style(state as never) : (style as StyleProp<ViewStyle>);
+        return [styles.shadow, { width: size, height: size }, resolved];
+      }}
       {...pressableProps}>
       <Box className="items-center justify-center">
         <Icon as={icon} size="md" className={iconClassName} />

@@ -39,7 +39,7 @@ import { useAppToast } from '@/lib/hooks/useAppToast';
 import { goBackOr } from '@/lib/navigation/goBack';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { useChat } from '@ai-sdk/react';
-import type { UIMessage } from 'ai';
+import type { FileUIPart, UIMessage } from 'ai';
 import { router } from 'expo-router';
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
@@ -51,6 +51,8 @@ import {
   Text as RNText,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+type PromptAttachment = FileUIPart & { id: string };
 
 /** 距底小于此值视为仍贴底；用户上滑后暂停自动滚 */
 const STICK_BOTTOM_THRESHOLD = 80;
@@ -74,14 +76,6 @@ function buildWelcomeMessage(botTitle: string, isMain: boolean): UIMessage {
   };
 }
 
-type PromptAttachment = {
-  id: string;
-  type: 'file';
-  filename?: string;
-  mediaType?: string;
-  url: string;
-};
-
 const AttachmentItem = memo(
   ({ attachment, onRemove }: { attachment: PromptAttachment; onRemove: (id: string) => void }) => {
     const handleRemove = React.useCallback(
@@ -98,6 +92,22 @@ const AttachmentItem = memo(
   }
 );
 
+function toPromptAttachment(file: {
+  id: string;
+  type?: string;
+  filename?: string;
+  mediaType?: string;
+  url: string;
+}): PromptAttachment {
+  return {
+    type: 'file',
+    id: file.id,
+    url: file.url,
+    filename: file.filename,
+    mediaType: file.mediaType ?? 'application/octet-stream',
+  };
+}
+
 function PromptInputAttachmentsDisplay() {
   const attachments = usePromptInputAttachments();
 
@@ -105,8 +115,12 @@ function PromptInputAttachmentsDisplay() {
 
   return (
     <Attachments variant="grid" className="mb-4">
-      {attachments.files.map((attachment) => (
-        <AttachmentItem key={attachment.id} attachment={attachment} onRemove={attachments.remove} />
+      {attachments.files.map((attachment: PromptAttachment) => (
+        <AttachmentItem
+          key={attachment.id}
+          attachment={toPromptAttachment(attachment)}
+          onRemove={attachments.remove}
+        />
       ))}
     </Attachments>
   );
@@ -193,12 +207,24 @@ export function ChatScreen({ botId }: ChatScreenProps) {
     </Message>
   );
 
-  const handleSubmit = ({ text, files }: { text: string; files?: PromptAttachment[] }) => {
+  const handleSubmit = ({
+    text,
+    files,
+  }: {
+    text: string;
+    files?: {
+      id: string;
+      filename?: string;
+      mediaType?: string;
+      url: string;
+    }[];
+  }) => {
     if (!text?.trim() && (!files || files.length === 0)) return;
     stickToBottomRef.current = true;
+    const mappedFiles = files?.length ? files.map(toPromptAttachment) : undefined;
     void sendMessage({
       text: text?.trim() ?? '',
-      files: files?.length ? files : undefined,
+      files: mappedFiles,
     });
   };
 

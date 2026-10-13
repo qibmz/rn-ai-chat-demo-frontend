@@ -18,7 +18,7 @@ function delay(ms: number) {
 }
 
 /** 后端未就绪时的演示 Transport：本地流式回显，协议对齐 AI SDK UIMessageChunk */
-export function createMockChatTransport(): ChatTransport {
+export function createMockChatTransport(): ChatTransport<UIMessage> {
   return {
     async sendMessages({ messages }) {
       const userText = getLastUserSummary(messages);

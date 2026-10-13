@@ -3,6 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
+      "@/components/ui/*": ["./types/ui-shim/*"],
       "@/*": ["./*"],
       "tailwind.config": ["./tailwind.config.js"]
     }
@@ -13,6 +14,8 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts",
-    "react-native-css-env.d.ts"
-  ]
+    "react-native-css-env.d.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "components/ui/**"]
 }

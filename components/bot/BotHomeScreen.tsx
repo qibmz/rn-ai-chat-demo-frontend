@@ -103,7 +103,7 @@ export function BotHomeScreen() {
                     placement="bottom right"
                     offset={8}
                     className="rounded-3xl"
-                    trigger={(triggerProps) => (
+                    trigger={(triggerProps: Record<string, unknown>) => (
                       <CircleIconButton
                         {...triggerProps}
                         icon={AddIcon}

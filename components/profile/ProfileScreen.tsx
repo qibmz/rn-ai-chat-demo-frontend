@@ -17,7 +17,7 @@ import { isNativeApp } from '@/lib/device/platform';
 import { useAppToast } from '@/lib/hooks/useAppToast';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { THEME_PREFERENCE_OPTIONS } from '@/lib/theme/types';
-import { getWeeklyUsage } from '@/lib/usage/mockUsage';
+import { useChatQuota } from '@/lib/chat/quota';
 import { getDisplayNameFromEmail } from '@/lib/utils/userDisplay';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -30,12 +30,12 @@ export function ProfileScreen() {
   const { user, logout } = useAuth();
   const { show } = useAppToast();
   const { preference } = useThemePreference();
+  const { usedPercentLabel } = useChatQuota();
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const displayName = getDisplayNameFromEmail(user?.email);
   const appearanceHint =
     THEME_PREFERENCE_OPTIONS.find((item) => item.value === preference)?.label ?? '跟随系统';
-  const { percentUsed } = getWeeklyUsage();
 
   const soon = (title: string) => {
     show({ title, description: '功能即将开放', action: 'info' });
@@ -95,7 +95,7 @@ export function ProfileScreen() {
             <VStack className="border-border/80 bg-card overflow-hidden rounded-3xl border">
               <ProfileMenuRow
                 label="用量"
-                hint={`${percentUsed}%`}
+                hint={usedPercentLabel}
                 icon={RepeatIcon}
                 onPress={() => router.push('/usage')}
                 showDivider={false}

@@ -10,8 +10,9 @@ module.exports = defineConfig([
       'dist/*',
       '.expo/*',
       'node_modules/*',
-      // gluestack / starter UI kit — often conflicts with React Compiler lint + Reanimated patterns
+      // gluestack 生成 UI：整目录移出 lint；禁止为过门禁去改该目录
       'components/ui/**',
+      'types/ui-shim/**',
     ],
   },
   {

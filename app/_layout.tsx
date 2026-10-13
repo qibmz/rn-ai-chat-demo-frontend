@@ -1,6 +1,7 @@
 import { ApiToastBridge } from '@/components/providers/ApiToastBridge';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
+import { QueryProvider } from '@/lib/query/QueryProvider';
 import { ThemePreferenceProvider, useThemePreference } from '@/lib/theme/ThemeProvider';
 import '@/global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -60,15 +61,17 @@ function ThemedApp() {
     <ThemeProvider value={resolved === 'dark' ? DarkTheme : DefaultTheme}>
       <GluestackUIProvider mode={preference}>
         <ApiToastBridge />
-        <AuthProvider>
-          <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(app)" />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: true }} />
-          </Stack>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(app)" />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: true }} />
+            </Stack>
+          </AuthProvider>
+        </QueryProvider>
       </GluestackUIProvider>
     </ThemeProvider>
   );

@@ -60,14 +60,16 @@ echo "feat: 添加某某功能" | pnpm exec commitlint
 ## 必须遵守
 
 1. 提交信息使用约定式格式（见上）；不要用 `--no-verify` 绕过 hook，除非用户明确要求。
-2. 改完代码确保能通过 `pnpm lint`（ESLint + Prettier check）。
+2. **功能 / 修复开发完成后必须跑通** `pnpm lint` 与 `pnpm typecheck`（见「改完后的自检」）；未通过不要宣称完成或提请提交 / PR。
 3. 包管理优先使用 **pnpm**（与当前 `node_modules` / lockfile 一致）。
    3.1. **Web 输出保持 `app.json` → `expo.web.output: "server"`**。本地跑起来也**禁止**改成 `single` / SPA 来绕 EMFILE；用 `metro.config.js` 限 worker、`CHOKIDAR_USEPOLLING`、清旧进程等方式处理。
 4. 环境变量、密钥、真实 API Key / DSN 不要写进仓库；本地用 `.env*.local`（已 gitignore）。
 5. 合并到生产走 PR（`develop` → `main`），并在 Test plan 里说明如何验证（web / iOS / Android 至少写清验证过的端）。
 6. Lint 栈对齐 [create-expo-stack](https://github.com/roninoss/create-expo-stack)：ESLint 9 + `eslint-config-expo` + Prettier；不要擅自换成 oxlint / Biome，除非团队明确决议。
-7. **`components/ui/**` 为生成代码，禁止修改**（见下方说明）；业务写在 `app/`、`components/` 下自有目录。
-   **例外**：仅当生成代码在真机上造成确定性崩溃、且业务侧无法绕过时，允许最小补丁（须写清原因）；例如 `GluestackUIProvider` 不得再对 `Appearance.setColorScheme` 传 `null`（须用 `unspecified`）。
+7. **`components/ui/**` 为 gluestack 生成代码：绝对禁止修改**（含「顺手修类型 / 加 `@ts-nocheck` / 为过 CI 改生成物」）。业务只写在 `app/`、`lib/`、自有 `components/`。
+   - **按需添加，禁止全量**：只用 `npx gluestack-ui@latest add <component>`；**禁止** `add --all` 或预装用不到的组件。加完跑 `node scripts/gen-ui-shim.mjs` 更新 `types/ui-shim`。
+   - **过 lint / typecheck 的正确做法**：该目录已在 `eslint.config.js` `ignores`、`.prettierignore` 与 `tsconfig.json` `exclude` 中整体排除；类型侧用 `types/ui-shim/*` 承接 `@/components/ui/*`（babel 运行时仍解析到真实文件）。**禁止**再改 `components/ui` 来消报错。
+   - **唯一例外**：真机确定性崩溃且业务侧无法绕过时，才允许**最小**补丁，并在 PR 写清原因（例如 `GluestackUIProvider` 不得对 `Appearance.setColorScheme` 传 `null`，须用 `unspecified`）。类型错误**不属**此例外。
 8. **尽量复用 gluestack（`@/components/ui/*`）已有组件**（如 `Menu` / `AlertDialog` / `Button`）；不要平行再造一套。确需自建业务组件时，须给出**明确理由**（例如领域语义封装、多端特化、组合多个 ui 组件），并写在 PR Summary 或相关注释里。
 9. **接入 gluestack 复合组件时，官方文档示例即契约**（见下方「官方示例优先」）；禁止为「先跑通」自拼精简版或平行封装。
 
@@ -89,22 +91,25 @@ echo "feat: 添加某某功能" | pnpm exec commitlint
 
 ## 改完后的自检
 
-```bash
-pnpm lint && pnpm run build
-```
-
-可选（当前 gluestack UI kit 仍有存量类型问题，CI 暂未强制）：
+开发完成（含准备 commit / 开 PR）前**必须**执行并通过：
 
 ```bash
-pnpm typecheck
+pnpm lint && pnpm typecheck
 ```
+
+- `pnpm lint`：ESLint + Prettier check
+- `pnpm typecheck`：`tsc --noEmit`
+
+涉及 Web 产物或发布路径时再跑：`pnpm run build`。
+
+说明：`components/ui/**` **不参与** `pnpm lint` / `pnpm typecheck`（eslint ignore + tsconfig exclude + `types/ui-shim`）。自检只对业务代码负责；**不要**为消报错去改生成 UI。
 
 ## Lint / 格式化约定
 
-- `pnpm lint`：ESLint + Prettier check
-- `pnpm format`：ESLint `--fix` + Prettier write
+- `pnpm lint`：ESLint + Prettier check（`components/ui/**` 已在 eslint ignore 与 `.prettierignore`）
+- `pnpm format`：ESLint `--fix` + Prettier write（同样跳过 `components/ui/**`）
 - pre-commit 经 lint-staged：对暂存的 `*.{js,jsx,ts,tsx}` 跑 eslint --fix + prettier；对 `*.{json,md,yml,yaml,css}` 跑 prettier
-- **`components/ui/**` 为 gluestack / 脚手架生成的 UI 套件，禁止手改、禁止塞业务逻辑**（含「顺手修一下」也不行）。业务侧**先查、先用**已有 ui 组件（示例：下拉用 `Menu`，确认用 `AlertDialog`，不要自写浮层菜单）。需要变体或领域封装时，在 `components/` 下自建并**组合引用** `@/components/ui/*`，同时说明为何不能直接用现成组件。该目录 **ESLint 已 ignore**，不要指望在里面靠 lint 兜底。
+- **`components/ui/**` 为 gluestack / 脚手架生成的 UI 套件，禁止手改、禁止塞业务逻辑**（含「顺手修一下 / 修类型」也不行）。业务侧**先查、先用**已有 ui 组件（示例：下拉用 `Menu`，确认用 `AlertDialog`，不要自写浮层菜单）。需要变体或领域封装时，在 `components/` 下自建并**组合引用** `@/components/ui/*`，同时说明为何不能直接用现成组件。新增 / 升级 gluestack 组件后若 `typecheck` 缺 stub，跑 `node scripts/gen-ui-shim.mjs` 再提交 `types/ui-shim`（**仍不要改** `components/ui`）。
 
 ## PR 描述结构
 

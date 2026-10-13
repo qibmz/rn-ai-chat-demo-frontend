@@ -26,7 +26,7 @@ export function useAppToast() {
       toast.show({
         placement,
         duration,
-        render: ({ id }) => (
+        render: ({ id }: { id: string }) => (
           <Toast
             nativeID={`toast-${id}`}
             action={action}
