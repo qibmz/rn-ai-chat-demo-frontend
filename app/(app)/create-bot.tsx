@@ -1,9 +1,9 @@
 import { BotFace } from '@/components/bot/BotFace';
+import { CapsuleField } from '@/components/form/CapsuleField';
 import { FrostedHeader, useFrostedHeaderContentInset } from '@/components/layout/FrostedHeader';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
-import { Input, InputField } from '@/components/ui/input';
 import { Pressable } from '@/components/ui/pressable';
 import { VStack } from '@/components/ui/vstack';
 import { useAppToast } from '@/lib/hooks/useAppToast';
@@ -50,14 +50,15 @@ export default function CreateBotScreen() {
           <VStack className="w-full items-center" space="2xl">
             <BotFace size={112} color={color} shape={shape === 'oval' ? 'oval' : shape} />
 
-            <Input className="bg-muted h-12 w-full rounded-full border-0 px-5">
-              <InputField
+            <Box className="w-full">
+              <CapsuleField
                 value={name}
                 onChangeText={setName}
                 placeholder="为 Bot 取个名字"
-                className="text-foreground text-center text-base"
+                style={{ textAlign: 'center' }}
+                returnKeyType="done"
               />
-            </Input>
+            </Box>
 
             <VStack className="w-full" space="md">
               <Box className="flex-row flex-wrap justify-center gap-3">

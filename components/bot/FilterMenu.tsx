@@ -13,7 +13,7 @@ type FilterMenuProps = {
 /** 搜索筛选：基于 gluestack Menu */
 export function FilterMenu({ value, onChange, trigger }: FilterMenuProps) {
   return (
-    <Menu placement="bottom right" offset={8} trigger={trigger} className="rounded-3xl">
+    <Menu placement="bottom right" offset={8} trigger={trigger} className="rounded-3xl p-1">
       {SEARCH_FILTERS.map((item) => {
         const selected = value === item.id;
         return (
@@ -21,11 +21,13 @@ export function FilterMenu({ value, onChange, trigger }: FilterMenuProps) {
             key={item.id}
             textValue={item.label}
             onPress={() => onChange(item.id)}
-            className="min-w-36">
-            <Box className="h-5 w-5 items-center justify-center">
+            className={`min-w-40 rounded-2xl ${selected ? 'bg-background' : ''}`}>
+            <MenuItemLabel className={selected ? 'text-foreground font-medium' : undefined}>
+              {item.label}
+            </MenuItemLabel>
+            <Box className="ml-auto h-5 w-5 items-center justify-center">
               {selected ? <Icon as={CheckIcon} size="sm" className="text-foreground" /> : null}
             </Box>
-            <MenuItemLabel>{item.label}</MenuItemLabel>
           </MenuItem>
         );
       })}

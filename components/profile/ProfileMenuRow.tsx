@@ -33,7 +33,7 @@ export function ProfileMenuRow({
         accessibilityLabel={label}>
         <HStack className="items-center justify-between" space="md">
           <HStack className="min-w-0 flex-1 items-center" space="md">
-            <Box className="bg-muted h-10 w-10 items-center justify-center rounded-2xl">
+            <Box className="bg-background h-10 w-10 items-center justify-center rounded-2xl">
               <Icon as={icon} size="md" className="text-foreground" />
             </Box>
             <Box className="min-w-0 flex-1">

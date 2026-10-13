@@ -44,9 +44,7 @@ export function UsageScreen() {
               ) : null}
             </VStack>
 
-            <VStack
-              className="border-border/80 bg-card w-full rounded-3xl border px-5 py-8"
-              space="xl">
+            <VStack className="bg-muted w-full rounded-3xl px-5 py-8" space="xl">
               {loading && !quota ? (
                 <Box className="items-center py-6">
                   <Spinner />

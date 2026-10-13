@@ -9,6 +9,7 @@ import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -56,6 +57,11 @@ export default function RootLayout() {
 
 function ThemedApp() {
   const { preference, resolved } = useThemePreference();
+  const background = resolved === 'dark' ? '#0a0a0a' : '#ffffff';
+
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(background);
+  }, [background]);
 
   return (
     <ThemeProvider value={resolved === 'dark' ? DarkTheme : DefaultTheme}>
@@ -64,7 +70,8 @@ function ThemedApp() {
         <QueryProvider>
           <AuthProvider>
             <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack
+              screenOptions={{ headerShown: false, contentStyle: { backgroundColor: background } }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="(auth)" />
               <Stack.Screen name="(app)" />

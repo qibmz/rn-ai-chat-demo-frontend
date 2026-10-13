@@ -54,17 +54,14 @@ export function ProfileScreen() {
 
   return (
     <Box className="bg-background flex-1">
-      <Box className="bg-muted/40 absolute inset-x-0 top-0 h-72" />
-
       <ScrollView
-        className="z-0 flex-1"
+        className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
           paddingTop: headerInset + 8,
           paddingBottom: Math.max(insets.bottom, 28),
         }}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}>
+        showsVerticalScrollIndicator={false}>
         <ScreenContainer variant="settings" className="flex-1 px-5">
           <VStack className="w-full flex-1" space="md">
             <VStack className="items-center pt-2 pb-6" space="lg">
@@ -92,7 +89,7 @@ export function ProfileScreen() {
             <Text size="xs" className="text-muted-foreground px-1">
               账号
             </Text>
-            <VStack className="border-border/80 bg-card overflow-hidden rounded-3xl border">
+            <VStack className="bg-muted overflow-hidden rounded-3xl">
               <ProfileMenuRow
                 label="用量"
                 hint={usedPercentLabel}
@@ -105,7 +102,7 @@ export function ProfileScreen() {
             <Text size="xs" className="text-muted-foreground px-1">
               偏好设置
             </Text>
-            <VStack className="border-border/80 bg-card overflow-hidden rounded-3xl border">
+            <VStack className="bg-muted overflow-hidden rounded-3xl">
               <ProfileMenuRow
                 label="外观"
                 hint={appearanceHint}

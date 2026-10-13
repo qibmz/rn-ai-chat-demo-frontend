@@ -1,9 +1,9 @@
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { Box } from '@/components/ui/box';
-import { Heading } from '@/components/ui/heading';
 import { ArrowLeftIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import { GlassView } from '@/components/ui/liquid-glass';
 import { Pressable } from '@/components/ui/pressable';
+import { Text } from '@/components/ui/text';
 import { goBackOr } from '@/lib/navigation/goBack';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import type { Href } from 'expo-router';
@@ -23,6 +23,10 @@ type FrostedHeaderProps = {
   backVariant?: 'close' | 'back';
   title?: string;
   accessibilityLabel?: string;
+  /** 返回钮右侧主内容（如搜索框）；有则不再渲染 title */
+  center?: React.ReactNode;
+  /** 右侧操作区 */
+  trailing?: React.ReactNode;
 };
 
 /**
@@ -35,6 +39,8 @@ export function FrostedHeader({
   backVariant = 'close',
   title,
   accessibilityLabel,
+  center,
+  trailing,
 }: FrostedHeaderProps) {
   const insets = useSafeAreaInsets();
   const { resolved } = useThemePreference();
@@ -54,11 +60,11 @@ export function FrostedHeader({
       className="absolute inset-x-0 top-0 z-20"
       style={{ paddingTop: insets.top }}>
       <GlassView
-        className="bg-background/70 web:backdrop-blur-xl w-full overflow-hidden"
+        className="bg-background/80 web:backdrop-blur-xl w-full overflow-hidden"
         glassEffectStyle="regular"
         colorScheme={resolved}>
-        <Box className="border-border/25 bg-background/30 h-14 w-full justify-center border-b px-2">
-          <ScreenContainer variant="settings" className="flex-row items-center px-1">
+        <Box className="bg-background/40 h-14 w-full justify-center px-2">
+          <ScreenContainer variant="settings" className="flex-row items-center gap-2 px-1">
             <Pressable
               onPress={handleBack}
               hitSlop={8}
@@ -72,11 +78,16 @@ export function FrostedHeader({
                 className="text-foreground"
               />
             </Pressable>
-            {title ? (
-              <Heading size="md" className="text-foreground ml-2">
+            {center ? (
+              <Box className="min-w-0 flex-1">{center}</Box>
+            ) : title ? (
+              <Text size="lg" bold numberOfLines={1} className="text-foreground ml-2 shrink-0">
                 {title}
-              </Heading>
-            ) : null}
+              </Text>
+            ) : (
+              <Box className="flex-1" />
+            )}
+            {trailing ? <Box className="shrink-0">{trailing}</Box> : null}
           </ScreenContainer>
         </Box>
       </GlassView>

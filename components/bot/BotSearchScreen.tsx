@@ -1,27 +1,26 @@
 import { BotConversationRow } from '@/components/bot/BotConversationRow';
 import { CircleIconButton } from '@/components/bot/CircleIconButton';
 import { FilterMenu } from '@/components/bot/FilterMenu';
+import { CapsuleField } from '@/components/form/CapsuleField';
+import { FrostedHeader, useFrostedHeaderContentInset } from '@/components/layout/FrostedHeader';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { Box } from '@/components/ui/box';
-import { CheckIcon, CloseIcon, MenuIcon, SearchIcon } from '@/components/ui/icon';
-import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
+import { Icon, SearchIcon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { GlassView } from '@/components/ui/liquid-glass';
 import { chatPath } from '@/lib/bot/bots';
 import { MOCK_CONVERSATIONS } from '@/lib/bot/mockConversations';
 import { SEARCH_FILTERS, type SearchFilterId } from '@/lib/bot/types';
-import { goBackOr } from '@/lib/navigation/goBack';
-import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { router } from 'expo-router';
+import { ListFilter } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** 独立搜索页：关闭 + 搜索框 + 筛选 */
 export function BotSearchScreen() {
   const insets = useSafeAreaInsets();
-  const { resolved } = useThemePreference();
+  const headerInset = useFrostedHeaderContentInset();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<SearchFilterId>('all');
   const filterActive = filter !== 'all';
@@ -42,7 +41,7 @@ export function BotSearchScreen() {
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
-          paddingTop: insets.top + 56,
+          paddingTop: headerInset + 8,
           paddingBottom: Math.max(insets.bottom, 28),
         }}
         showsVerticalScrollIndicator={false}
@@ -65,53 +64,48 @@ export function BotSearchScreen() {
         </ScreenContainer>
       </ScrollView>
 
-      <Box
-        pointerEvents="box-none"
-        className="absolute inset-x-0 top-0 z-20"
-        style={{ paddingTop: insets.top }}>
-        <GlassView
-          className="bg-background/70 web:backdrop-blur-xl w-full overflow-hidden"
-          glassEffectStyle="regular"
-          colorScheme={resolved}>
-          <Box className="bg-background/25 h-14 justify-center px-3">
-            <ScreenContainer variant="settings" className="w-full">
-              <Box className="flex-row items-center gap-2">
-                <CircleIconButton
-                  icon={CloseIcon}
-                  accessibilityLabel="关闭搜索"
-                  onPress={() => goBackOr('/home')}
-                />
-                <Input className="bg-muted h-10 flex-1 rounded-full border-0 px-3">
-                  <InputSlot className="pl-1">
-                    <InputIcon as={SearchIcon} className="text-muted-foreground" />
-                  </InputSlot>
-                  <InputField
-                    value={query}
-                    onChangeText={setQuery}
-                    placeholder="搜索"
-                    autoFocus
-                    className="text-foreground text-base"
-                    returnKeyType="search"
-                  />
-                </Input>
-                <FilterMenu
-                  value={filter}
-                  onChange={setFilter}
-                  trigger={(triggerProps) => (
-                    <CircleIconButton
-                      {...triggerProps}
-                      icon={filterActive ? CheckIcon : MenuIcon}
-                      accessibilityLabel={filterActive ? `筛选中：${filterLabel}` : '筛选'}
-                      className={filterActive ? 'bg-foreground' : undefined}
-                      iconClassName={filterActive ? 'text-background' : 'text-foreground'}
-                    />
-                  )}
-                />
-              </Box>
-            </ScreenContainer>
+      <FrostedHeader
+        fallbackHref="/home"
+        backVariant="close"
+        accessibilityLabel="关闭搜索"
+        center={
+          <Box className="relative w-full justify-center">
+            <Box className="absolute left-3 z-10" pointerEvents="none">
+              <Icon as={SearchIcon} size="sm" className="text-muted-foreground" />
+            </Box>
+            <CapsuleField
+              value={query}
+              onChangeText={setQuery}
+              placeholder="搜索"
+              autoFocus
+              returnKeyType="search"
+              containerClassName="h-10"
+              style={styles.searchField}
+            />
           </Box>
-        </GlassView>
-      </Box>
+        }
+        trailing={
+          <FilterMenu
+            value={filter}
+            onChange={setFilter}
+            trigger={(triggerProps) => (
+              <CircleIconButton
+                {...triggerProps}
+                icon={ListFilter}
+                accessibilityLabel={filterActive ? `筛选中：${filterLabel}` : '筛选'}
+                className={filterActive ? 'bg-foreground' : undefined}
+                iconClassName={filterActive ? 'text-background' : 'text-foreground'}
+              />
+            )}
+          />
+        }
+      />
     </Box>
   );
 }
+
+const styles = StyleSheet.create({
+  searchField: {
+    paddingLeft: 28,
+  },
+});

@@ -93,9 +93,10 @@ export function BotHomeScreen() {
                     <UserAvatar email={user?.email} className="h-10 w-10" textClassName="text-xs" />
                   </View>
                 </Pressable>
-                <Box className="flex-row items-center gap-2.5">
+                <Box className="flex-row items-center gap-3">
                   <CircleIconButton
                     icon={SearchIcon}
+                    size={56}
                     accessibilityLabel="搜索"
                     onPress={openSearch}
                   />
@@ -107,6 +108,7 @@ export function BotHomeScreen() {
                       <CircleIconButton
                         {...triggerProps}
                         icon={AddIcon}
+                        size={56}
                         accessibilityLabel="新建"
                       />
                     )}>

@@ -46,7 +46,7 @@ export function AppearanceScreen() {
               </Text>
             </VStack>
 
-            <VStack className="border-border/80 bg-card overflow-hidden rounded-3xl border">
+            <VStack className="bg-muted overflow-hidden rounded-3xl">
               {THEME_PREFERENCE_OPTIONS.map((option, index) => {
                 const selected = preference === option.value;
                 return (
@@ -59,7 +59,7 @@ export function AppearanceScreen() {
                       accessibilityLabel={option.label}>
                       <HStack className="items-center justify-between" space="md">
                         <HStack className="min-w-0 flex-1 items-center" space="md">
-                          <Box className="bg-muted h-10 w-10 items-center justify-center rounded-2xl">
+                          <Box className="bg-background h-10 w-10 items-center justify-center rounded-2xl">
                             <Icon
                               as={OPTION_ICONS[option.value]}
                               size="md"

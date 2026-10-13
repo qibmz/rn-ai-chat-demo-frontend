@@ -33,7 +33,7 @@ export function ProfileSwitchRow({
       <Box className="px-4 py-3.5">
         <HStack className="items-center justify-between" space="md">
           <HStack className="min-w-0 flex-1 items-center" space="md">
-            <Box className="bg-muted h-10 w-10 items-center justify-center rounded-2xl">
+            <Box className="bg-background h-10 w-10 items-center justify-center rounded-2xl">
               <Icon as={icon} size="md" className="text-foreground" />
             </Box>
             <Box className="min-w-0 flex-1">
@@ -49,9 +49,11 @@ export function ProfileSwitchRow({
           </HStack>
           <Switch
             size="md"
-            isChecked={value}
+            value={value}
             isDisabled={disabled}
-            onToggle={() => onValueChange(!value)}
+            onToggle={(next?: boolean) => {
+              onValueChange(typeof next === 'boolean' ? next : !value);
+            }}
             accessibilityLabel={label}
           />
         </HStack>
