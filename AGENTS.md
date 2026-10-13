@@ -169,10 +169,12 @@ RN / Expo **不会**像 uni-app 那样「输入框聚焦后页面自动上推」
 后端统一响应：`{ code, message, data | errors, timestamp, path }`；成功 `code === 200`，失败 `code` 为 HTTP 状态码。
 
 - 封装见 `lib/api/client.ts`：成功取 `data`；失败抛 `ApiError`（含 `code` / `message` / `errors`）
+- **失败默认 toast**（`hideToast` 默认 `false`）：用后端/封装中文 `message` 弹一次；页面不要再 catch 里重复 toast。静默场景（启动 `fetchMe`、refresh、logout）传 `hideToast: true`
+- Toast 桥：`ApiToastBridge` 注册到 `lib/api/toastBridge.ts`，须挂在 `GluestackUIProvider` 内
 - **401**（未登录 / access 过期）：自动用 refresh token 刷新一次并重试原请求；刷新失败则 `clearSession` 回到未登录
 - 登录失败也是 401（邮箱或密码错误）——`login` / `register` / `refresh` / `logout` 必须 `skipAuth: true`，**不要**对它们做 refresh
 - 受保护接口不要手传 `Authorization`，由 client 从 Auth 会话自动带上
-- 用户可见错误文案用后端返回的中文 `message`
+- 用户可见错误文案用后端返回的中文 `message`；本地校验 / 成功提示仍由页面 toast
 
 ## 代码习惯
 

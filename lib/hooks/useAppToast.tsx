@@ -27,7 +27,11 @@ export function useAppToast() {
         placement,
         duration,
         render: ({ id }) => (
-          <Toast nativeID={`toast-${id}`} action={action} variant="outline" className="mx-4 mt-2">
+          <Toast
+            nativeID={`toast-${id}`}
+            action={action}
+            variant="outline"
+            className="mx-4 mt-2 max-w-100 min-w-70 self-center">
             <ToastTitle>{title}</ToastTitle>
             {description ? <ToastDescription>{description}</ToastDescription> : null}
           </Toast>

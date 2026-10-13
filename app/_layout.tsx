@@ -1,3 +1,4 @@
+import { ApiToastBridge } from '@/components/providers/ApiToastBridge';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
 import { ThemePreferenceProvider, useThemePreference } from '@/lib/theme/ThemeProvider';
@@ -58,6 +59,7 @@ function ThemedApp() {
   return (
     <ThemeProvider value={resolved === 'dark' ? DarkTheme : DefaultTheme}>
       <GluestackUIProvider mode={preference}>
+        <ApiToastBridge />
         <AuthProvider>
           <StatusBar style={resolved === 'dark' ? 'light' : 'dark'} />
           <Stack screenOptions={{ headerShown: false }}>

@@ -24,6 +24,7 @@ export function refreshTokens(refreshToken: string) {
     method: 'POST',
     body: { refreshToken },
     skipAuth: true,
+    hideToast: true,
   });
 }
 
@@ -32,6 +33,7 @@ export function logout(refreshToken: string) {
     method: 'POST',
     body: { refreshToken },
     skipAuth: true,
+    hideToast: true,
   });
 }
 
@@ -53,6 +55,8 @@ export function resetPassword(email: string, code: string, newPassword: string) 
 
 /** Protected — 自动带 access token；401 时 refresh 后重试。 */
 
-export function fetchMe() {
-  return apiRequest<UserProfile>('/auth/me');
+export function fetchMe(options?: { hideToast?: boolean }) {
+  return apiRequest<UserProfile>('/auth/me', {
+    hideToast: options?.hideToast,
+  });
 }

@@ -4,7 +4,6 @@ import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import * as authApi from '@/lib/api/auth';
-import { ApiError } from '@/lib/api/client';
 import { useAppToast } from '@/lib/hooks/useAppToast';
 import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { getPrimarySpinnerColor } from '@/lib/theme/spinnerColor';
@@ -45,9 +44,8 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
         description: '若邮箱已注册，请查收 8 位验证码邮件',
         action: 'success',
       });
-    } catch (error) {
-      const message = error instanceof ApiError ? error.message : '操作失败，请稍后重试';
-      toast.show({ title: '发送失败', description: message, action: 'error' });
+    } catch {
+      // 接口错误已由 apiRequest 默认 toast
     } finally {
       setSending(false);
     }
@@ -78,9 +76,8 @@ export function ForgotPasswordForm({ onBackToLogin, initialEmail = '' }: ForgotP
       await authApi.resetPassword(normalizedEmail, normalizedCode, newPassword);
       toast.show({ title: '密码已重置', description: '请使用新密码登录', action: 'success' });
       onBackToLogin();
-    } catch (error) {
-      const message = error instanceof ApiError ? error.message : '操作失败，请稍后重试';
-      toast.show({ title: '重置失败', description: message, action: 'error' });
+    } catch {
+      // 接口错误已由 apiRequest 默认 toast
     } finally {
       setSubmitting(false);
     }

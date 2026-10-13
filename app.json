@@ -18,6 +18,7 @@
       "package": "com.qbmzzz.niuma",
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "resize",
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

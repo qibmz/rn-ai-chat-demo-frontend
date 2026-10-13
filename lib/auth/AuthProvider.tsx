@@ -29,7 +29,8 @@ async function bootstrapSession(): Promise<{ tokens: TokenPair; user: UserProfil
   });
 
   try {
-    const user = await authApi.fetchMe();
+    // 启动探测静默：网络失败不要一进 App 就 toast
+    const user = await authApi.fetchMe({ hideToast: true });
     const tokens = (await loadTokens()) ?? stored;
     return { tokens, user };
   } catch (error) {

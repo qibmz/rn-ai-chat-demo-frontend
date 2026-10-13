@@ -84,13 +84,17 @@ placeholder: text-muted-foreground
 
 ### 3.3 登录 / 注册切换（AuthModeSwitch）
 
+不用 gluestack `Tabs`（FlatList + Indicator 盖字）。也不用 Reanimated / onLayout 滑块（H5 的 `Box` 是 div，传 `onLayout` 会报错白屏）。
+
+选中态直接打在项上：
+
 ```text
-容器: bg-muted flex-row rounded-full p-1
-项:   flex-1 rounded-full py-2.5
-选中: bg-card + text-foreground
-未选: transparent + text-muted-foreground
-文案: text-sm font-medium
+容器: bg-muted w-full flex-row rounded-full p-1
+项:   flex-1 rounded-full py-2.5；选中 bg-card，未选 bg-transparent
+文案: text-sm font-medium；选中 text-foreground / 未选 text-muted-foreground
 ```
+
+Tab 须常驻在 `login.tsx`（不要跟表单一起 `key` 重挂）。表单区：`FadeIn`（~200ms）。
 
 ### 3.4 标题层级
 
@@ -121,11 +125,12 @@ placeholder: text-muted-foreground
 
 ## 5. 动效预算
 
-| 场景      | 建议                                             |
-| --------- | ------------------------------------------------ |
-| Auth 顶区 | 整组轻浮即可（1 路动画）                         |
-| 按钮      | 仅 opacity active/hover                          |
-| 登录页    | 不要再加背景粒子、多球独立 bounce、整页 parallax |
+| 场景          | 建议                                                      |
+| ------------- | --------------------------------------------------------- |
+| Auth 顶区     | 整组轻浮即可（1 路动画）                                  |
+| 登录/注册 Tab | AuthModeSwitch 选中 bg-card（无绝对定位滑块）+ 表单轻淡入 |
+| 按钮          | 仅 opacity active/hover                                   |
+| 登录页        | 不要再加背景粒子、多球独立 bounce、整页 parallax          |
 
 卡顿优先砍动画，不要靠降级成花哨 GIF 堆性能债。
 
@@ -153,12 +158,12 @@ placeholder: text-muted-foreground
 
 ## 8. 关键文件
 
-| 路径                                 | 职责             |
-| ------------------------------------ | ---------------- |
-| `components/auth/AuthShell.tsx`      | 页壳 + 键盘      |
-| `components/auth/BlobOrbit.tsx`      | 顶区品牌环       |
-| `components/auth/AuthField.tsx`      | 胶囊输入         |
-| `components/auth/AuthModeSwitch.tsx` | 登录/注册切换    |
-| `components/auth/LoginForm.tsx` 等   | 业务表单         |
-| `app/(auth)/welcome.tsx`             | 品牌首屏基准     |
-| `AGENTS.md`                          | 工程与多端硬约束 |
+| 路径                                 | 职责                    |
+| ------------------------------------ | ----------------------- |
+| `components/auth/AuthShell.tsx`      | 页壳 + 键盘             |
+| `components/auth/BlobOrbit.tsx`      | 顶区品牌环              |
+| `components/auth/AuthField.tsx`      | 胶囊输入                |
+| `components/auth/AuthModeSwitch.tsx` | 等分滑动胶囊（非 Tabs） |
+| `components/auth/LoginForm.tsx` 等   | 业务表单                |
+| `app/(auth)/welcome.tsx`             | 品牌首屏基准            |
+| `AGENTS.md`                          | 工程与多端硬约束        |
