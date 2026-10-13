@@ -9,22 +9,23 @@ import { Menu, MenuItem, MenuItemLabel } from '@/components/ui/menu';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { GlassView } from '@/components/ui/liquid-glass';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { MAIN_BOT_ID, chatPath, getSubBots } from '@/lib/bot/bots';
 import { MOCK_CONVERSATIONS } from '@/lib/bot/mockConversations';
 import { useAppToast } from '@/lib/hooks/useAppToast';
-import { useThemePreference } from '@/lib/theme/ThemeProvider';
 import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+/** 顶栏内容区高度：需大于圆钮，避免 overflow 裁没 */
+const HOME_HEADER_BAR_HEIGHT = 64;
+const HOME_HEADER_ICON_SIZE = 48;
+
 export function BotHomeScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { show } = useAppToast();
-  const { resolved } = useThemePreference();
   const subBots = getSubBots();
 
   const soon = (title: string) => {
@@ -40,7 +41,7 @@ export function BotHomeScreen() {
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
-          paddingTop: insets.top + 56,
+          paddingTop: insets.top + HOME_HEADER_BAR_HEIGHT,
           paddingBottom: Math.max(insets.bottom, 28),
         }}
         showsVerticalScrollIndicator={false}
@@ -76,60 +77,58 @@ export function BotHomeScreen() {
         pointerEvents="box-none"
         className="absolute inset-x-0 top-0 z-20"
         style={{ paddingTop: insets.top }}>
-        <GlassView
-          className="bg-background/70 web:backdrop-blur-xl w-full overflow-hidden"
-          glassEffectStyle="regular"
-          colorScheme={resolved}>
-          <Box className="bg-background/25 h-14 justify-center px-3">
-            <ScreenContainer variant="settings" className="w-full">
-              <Box className="flex-row items-center justify-between">
-                <Pressable
-                  onPress={() => router.push('/profile')}
-                  hitSlop={8}
-                  accessibilityRole="button"
-                  accessibilityLabel="打开个人中心"
-                  className="rounded-full data-[active=true]:opacity-85">
-                  <View className="rounded-full shadow-sm">
-                    <UserAvatar email={user?.email} className="h-10 w-10" textClassName="text-xs" />
-                  </View>
-                </Pressable>
-                <Box className="flex-row items-center gap-3">
-                  <CircleIconButton
-                    icon={SearchIcon}
-                    size={56}
-                    accessibilityLabel="搜索"
-                    onPress={openSearch}
-                  />
-                  <Menu
-                    placement="bottom right"
-                    offset={8}
-                    className="rounded-3xl"
-                    trigger={(triggerProps: Record<string, unknown>) => (
-                      <CircleIconButton
-                        {...triggerProps}
-                        icon={AddIcon}
-                        size={56}
-                        accessibilityLabel="新建"
-                      />
-                    )}>
-                    <MenuItem
-                      textValue="新建 Bot"
-                      onPress={() => router.push('/create-bot')}
-                      className="min-w-36">
-                      <MenuItemLabel>新建 Bot</MenuItemLabel>
-                    </MenuItem>
-                    <MenuItem
-                      textValue="新建群聊"
-                      onPress={() => soon('新建群聊')}
-                      className="min-w-36">
-                      <MenuItemLabel>新建群聊</MenuItemLabel>
-                    </MenuItem>
-                  </Menu>
-                </Box>
+        <Box
+          pointerEvents="box-none"
+          className="w-full justify-center px-3"
+          style={{ height: HOME_HEADER_BAR_HEIGHT }}>
+          <ScreenContainer variant="settings" className="w-full">
+            <Box className="flex-row items-center justify-between">
+              <Pressable
+                onPress={() => router.push('/profile')}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="打开个人中心"
+                className="rounded-full data-[active=true]:opacity-85">
+                <View className="rounded-full shadow-sm">
+                  <UserAvatar email={user?.email} className="h-11 w-11" textClassName="text-sm" />
+                </View>
+              </Pressable>
+              <Box className="flex-row items-center gap-3">
+                <CircleIconButton
+                  icon={SearchIcon}
+                  size={HOME_HEADER_ICON_SIZE}
+                  accessibilityLabel="搜索"
+                  onPress={openSearch}
+                />
+                <Menu
+                  placement="bottom right"
+                  offset={8}
+                  className="rounded-3xl"
+                  trigger={(triggerProps: Record<string, unknown>) => (
+                    <CircleIconButton
+                      {...triggerProps}
+                      icon={AddIcon}
+                      size={HOME_HEADER_ICON_SIZE}
+                      accessibilityLabel="新建"
+                    />
+                  )}>
+                  <MenuItem
+                    textValue="新建 Bot"
+                    onPress={() => router.push('/create-bot')}
+                    className="min-w-36">
+                    <MenuItemLabel>新建 Bot</MenuItemLabel>
+                  </MenuItem>
+                  <MenuItem
+                    textValue="新建群聊"
+                    onPress={() => soon('新建群聊')}
+                    className="min-w-36">
+                    <MenuItemLabel>新建群聊</MenuItemLabel>
+                  </MenuItem>
+                </Menu>
               </Box>
-            </ScreenContainer>
-          </Box>
-        </GlassView>
+            </Box>
+          </ScreenContainer>
+        </Box>
       </Box>
     </Box>
   );
